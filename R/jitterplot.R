@@ -1,7 +1,7 @@
 #UI function for the compJitter module
 compJitterUI <- function(id) {
   ns <- NS(id)
-  plotlyOutput(ns("compJitter"))
+  plotlyOutput(ns("compJitter"), height = "200px") 
 }
 
 #Server function for the compJitter module
@@ -11,50 +11,53 @@ compJitterServer <- function(id) {
       
       hl_data <- get(load("data/hl_composite_score.rda"))
       
-      # Add a random y-axis value for each point
+      #Add a random y-axis value for each point
       set.seed(123)  # for reproducibility
-      hl_data$random_y <- runif(nrow(hl_data), min = -2, max = 2)
+      hl_data$random_y <- runif(nrow(hl_data), min = -1, max = 1)
       
-      # Calculate the mean of the Composite score
-      mean_composite_score <- mean(hl_data$`Composite score`, na.rm = TRUE)
+      #Calculate the mean of the Composite score
+      mean_composite_score <- mean(hl_data$`Composite score`)
       
-      # Determine the range of the x-axis to center the vertical line
-      x_max <- max(abs(hl_data$`Composite score`), na.rm = TRUE)
+      #Set limits of x axis to maximum composite score
+      x_max <- max(abs(hl_data$`Composite score`))
       
-      # Define the additional lines, excluding 0
+      #Define points to include vertical grid lines
       additional_lines <- c(-30, -25, -20, -15, -10, -5, 5, 10, 15, 20, 25, 30)
-      labels <- as.character(c(additional_lines, 0))  # Include 0 in labels
+      labels <- as.character(c(additional_lines, 0))  # Include 0 in labels, not included in additional_lines as want to make line darker
       
-      # Create the ggplot with random y-axis positions and add lines
-      p <- ggplot(hl_data, aes(x = `Composite score`, y = random_y, 
-                               text = paste("LTLA Name:", ltla21_name, "<br>Health Index Score:", `Composite score`))) +
+      #Add `text` column for tooltips
+      hl_data$text <- paste("LTLA Name:", hl_data$ltla21_name, "<br>Score:", hl_data$`Composite score`)
+      
+      #Create the jitterplot
+      p <- ggplot(hl_data, aes(x = `Composite score`, y = random_y)) +
         geom_jitter(width = 0.2, height = 0) +
-        geom_hline(yintercept = 0, color = "black", size = 0.03) +  # Solid, thinner horizontal line
-        geom_vline(xintercept = additional_lines, color = "grey", size = 0.5) +  # Additional vertical lines
-        geom_vline(xintercept = 0, colour = "black", size = 0.7) +  # Distinct line for x = 0
+        geom_hline(yintercept = 0, color = "grey", linewidth = 0.3) +
+        geom_vline(xintercept = additional_lines, color = "grey", linewidth = 0.3) +
+        geom_vline(xintercept = 0, colour = "black", linewidth = 0.7) +
         scale_x_continuous(
-          limits = c(-x_max, x_max),  # Make x-axis symmetric
-          breaks = c(additional_lines, 0),  # Ensure 0 is a break point
-          labels = labels  # Set labels for these positions
+          limits = c(-x_max, x_max),
+          breaks = c(additional_lines, 0),
+          labels = labels
         ) +
         labs(
           x = "Normalised units",
-          y = "Counties"
-          # Remove title argument
+          y = "Counties",
+          title = "Composite Score Jitterplot"  # Add title here
         ) +
         theme_minimal() +
-        theme(axis.text.y = element_blank(), # Remove y-axis text
-              axis.ticks.y = element_blank(), # Remove y-axis ticks
-              panel.grid.major.y = element_blank(), # Remove major grid lines on y-axis
-              panel.grid.minor.y = element_blank(), # Remove minor grid lines on y-axis
-              panel.grid.major.x = element_blank(), # Remove major grid lines on x-axis
-              panel.grid.minor.x = element_blank()) # Remove minor grid lines on x-axis
+        theme(axis.text.y = element_blank(), # Hides major grid lines and text
+              axis.ticks.y = element_blank(),
+              panel.grid.major.y = element_blank(), 
+              panel.grid.minor.y = element_blank(),
+              panel.grid.major.x = element_blank(),
+              panel.grid.minor.x = element_blank()) +
+        coord_fixed(ratio = 3)
       
-      # Fix the aspect ratio to make the plot vertically shorter
-      p <- p + coord_fixed(ratio = 1)  # Adjust the ratio as needed
-      
-      # Convert to a plotly object and keep both ltla21_name and Health Index Score in the hover information
-      ggplotly(p, tooltip = "text")
+      #Convert to Plotly with tooltip
+      ggplotly(p, tooltip = "text") %>% 
+        layout(
+          hoverlabel = list(bgcolor = "white", font = list(color = "black"))
+        )
     })
   })
 }
