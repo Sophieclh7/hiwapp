@@ -37,13 +37,12 @@ boxplotServer <- function(id) {
       p <- ggplot(long_data, aes(x = ScoreType, y = ScoreValue, 
                                  text = paste("LTLA Name:", ltla21_name, "<br>Score:", ScoreValue))) +
         geom_boxplot() +
-        geom_jitter(aes(text = paste("LTLA Name:", ltla21_name, "<br>Score:", ScoreValue)),
-                    width = 0.2, height = 0, alpha = 0.5) +
+        geom_jitter(width = 0.2, height = 0, alpha = 0.5) +
         theme_minimal() +
         labs(x = "Subdomain", y = "Normalised score", title = "Boxplots of scores for each subdomain") +
         theme(axis.text.x = element_text(angle = 45, hjust = 1))
       
-      # Convert to plotly object
+      # Convert to Plotly with tooltip
       ggplotly(p, tooltip = "text")
     })
   })

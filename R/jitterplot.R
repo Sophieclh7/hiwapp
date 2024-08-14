@@ -29,31 +29,30 @@ compJitterServer <- function(id) {
       p <- ggplot(hl_data, aes(x = `Composite score`, y = random_y, 
                                text = paste("LTLA Name:", ltla21_name, "<br>Health Index Score:", `Composite score`))) +
         geom_jitter(width = 0.2, height = 0) +
-        geom_hline(yintercept = 0, color = "black", size = 0.03) +  # Solid, thinner horizontal line
-        geom_vline(xintercept = additional_lines, color = "grey", size = 0.5) +  # Additional vertical lines
-        geom_vline(xintercept = 0, colour = "black", size = 0.7) +  # Distinct line for x = 0
+        geom_hline(yintercept = 0, color = "black", linewidth = 0.3) +
+        geom_vline(xintercept = additional_lines, color = "grey", linewidth = 0.5) +
+        geom_vline(xintercept = 0, colour = "black", linewidth = 0.7) +
         scale_x_continuous(
-          limits = c(-x_max, x_max),  # Make x-axis symmetric
-          breaks = c(additional_lines, 0),  # Ensure 0 is a break point
-          labels = labels  # Set labels for these positions
+          limits = c(-x_max, x_max),
+          breaks = c(additional_lines, 0),
+          labels = labels
         ) +
         labs(
           x = "Normalised units",
           y = "Counties"
-          # Remove title argument
         ) +
         theme_minimal() +
-        theme(axis.text.y = element_blank(), # Remove y-axis text
-              axis.ticks.y = element_blank(), # Remove y-axis ticks
-              panel.grid.major.y = element_blank(), # Remove major grid lines on y-axis
-              panel.grid.minor.y = element_blank(), # Remove minor grid lines on y-axis
-              panel.grid.major.x = element_blank(), # Remove major grid lines on x-axis
-              panel.grid.minor.x = element_blank()) # Remove minor grid lines on x-axis
+        theme(axis.text.y = element_blank(),
+              axis.ticks.y = element_blank(),
+              panel.grid.major.y = element_blank(),
+              panel.grid.minor.y = element_blank(),
+              panel.grid.major.x = element_blank(),
+              panel.grid.minor.x = element_blank())
       
-      # Fix the aspect ratio to make the plot vertically shorter
-      p <- p + coord_fixed(ratio = 1)  # Adjust the ratio as needed
+      # Fix aspect ratio
+      p <- p + coord_fixed(ratio = 1)
       
-      # Convert to a plotly object and keep both ltla21_name and Health Index Score in the hover information
+      # Convert to Plotly with tooltip
       ggplotly(p, tooltip = "text")
     })
   })
