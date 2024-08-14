@@ -1,5 +1,5 @@
 ui <- fluidPage(
   # Headings and introduction
-  h1("Barchart for adult abesity"),
+  h1("Interactive Bar Chart - Healthy Lives Indicators by County in Wales"),
   barchartUI("barchartModule")  
 )
