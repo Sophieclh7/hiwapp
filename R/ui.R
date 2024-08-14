@@ -7,16 +7,9 @@
 #    https://shiny.posit.co/
 #
 
-ui <- shinyUI(fluidPage(
-  titlePanel("Jitter Plot Example"),
-  
-  sidebarLayout(
-    sidebarPanel(
-      # Add input controls here if needed
-    ),
-    
-    mainPanel(
-      plotOutput("jitterPlot")  # This is where the plot will be rendered
-    )
-  )
-))
+ui <- fluidPage(
+  # Headings and introduction
+  h1("Health composite scores for Wales"),
+  compJitterUI("compJitterModule")  # Pass an id argument here
+)
+
