@@ -12,4 +12,3 @@ ui <- fluidPage(
   h1("Health composite scores for Wales"),
   compJitterUI("compJitterModule")  # Pass an id argument here
 )
-
