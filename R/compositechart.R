@@ -3,6 +3,10 @@ compositechartUI <- function(id) {
   ns <- NS(id)
   
   tagList(
+    # Add the title here
+    h1("Composite Score Chart"),
+    
+    # County selection input
     selectInput(
       ns("county"), 
       "Select County:",
@@ -14,7 +18,11 @@ compositechartUI <- function(id) {
                   "Rhondda Cynon Taf", "Caerphilly", "Blaenau Gwent",
                   "Torfaen", "Monmouthshire", "Newport",
                   "Powys", "Merthyr Tydfil")),
+    
+    # Output for comparison table
     tableOutput(ns("comparisonTable")),
+    
+    # Output for description
     textOutput(ns("description"))
   )
 }
@@ -43,12 +51,12 @@ compositechartServer <- function(id) {
       data_to_display <- if (input$county == "") {
         hl_composite_score
       } else {
-        hl_composite_score %>%
+        hl_composite_score |>
           filter(ltla21_name == input$county)
       }
       
       # Select the relevant columns
-      data_to_display %>%
+      data_to_display |>
         select(
           `Behavioural risk composite score`,
           `Children & young people composite score`,
