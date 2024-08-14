@@ -23,13 +23,11 @@ compJitterServer <- function(id) {
       
       #Define points to include vertical grid lines
       additional_lines <- c(-30, -25, -20, -15, -10, -5, 5, 10, 15, 20, 25, 30)
-      labels <- as.character(c(additional_lines, 0))  # Include 0 in labels, not included in additional_lines as want to make line darker
-      
-      #Add `text` column for tooltips
-      hl_data$text <- paste("LTLA Name:", hl_data$ltla21_name, "<br>Score:", hl_data$`Composite score`)
+      labels <- as.character(c(additional_lines, 0))  #Include 0 in labels, not included in additional_lines as want to make line darker
       
       #Create the jitterplot
-      p <- ggplot(hl_data, aes(x = `Composite score`, y = random_y)) +
+      p <- ggplot(hl_data, aes(x = `Composite score`, y = random_y, 
+                               text = paste("LTLA Name:", ltla21_name, "<br>Health Index Score:", `Composite score`))) +
         geom_jitter(width = 0.2, height = 0) +
         geom_hline(yintercept = 0, color = "grey", linewidth = 0.3) +
         geom_vline(xintercept = additional_lines, color = "grey", linewidth = 0.3) +
@@ -45,19 +43,18 @@ compJitterServer <- function(id) {
           title = "Composite Score Jitterplot"  # Add title here
         ) +
         theme_minimal() +
-        theme(axis.text.y = element_blank(), # Hides major grid lines and text
+        theme(axis.text.y = element_blank(), #Hides major grid lines and text
               axis.ticks.y = element_blank(),
               panel.grid.major.y = element_blank(), 
               panel.grid.minor.y = element_blank(),
               panel.grid.major.x = element_blank(),
-              panel.grid.minor.x = element_blank()) +
-        coord_fixed(ratio = 3)
+              panel.grid.minor.x = element_blank())
+      
+      #Adjust ration of x to y units, to make plot less tall
+      p <- p + coord_fixed(ratio = 3)
       
       #Convert to Plotly with tooltip
-      ggplotly(p, tooltip = "text") %>% 
-        layout(
-          hoverlabel = list(bgcolor = "white", font = list(color = "black"))
-        )
+      ggplotly(p, tooltip = "text")
     })
   })
 }
