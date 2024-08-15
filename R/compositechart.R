@@ -1,4 +1,4 @@
-# ---- user interface ----
+# ---- User Interface ----
 compositechartUI <- function(id) {
   ns <- NS(id)
   
@@ -19,7 +19,8 @@ compositechartUI <- function(id) {
                   "Bridgend", "Vale of Glamorgan", "Cardiff",
                   "Rhondda Cynon Taf", "Caerphilly", "Blaenau Gwent",
                   "Torfaen", "Monmouthshire", "Newport",
-                  "Powys", "Merthyr Tydfil")),
+                  "Powys", "Merthyr Tydfil")
+    ),
     
     # Output for comparison table
     tableOutput(ns("comparisonTable")),
@@ -27,8 +28,7 @@ compositechartUI <- function(id) {
     # Output for description
     textOutput(ns("description"))
   )
-}                 
-# ---- Server Function ----
+}
 # ---- Server Function ----
 compositechartServer <- function(id) {
   moduleServer(id, function(input, output, session) {
@@ -41,6 +41,7 @@ compositechartServer <- function(id) {
     # Verify column names to ensure correct column names are used
     req(
       all(c("ltla21_name", 
+            "ltla21_code",
             "Behavioural risk composite score", 
             "Children & young people composite score", 
             "Physiological risk factors composite score", 
@@ -50,20 +51,18 @@ compositechartServer <- function(id) {
     
     output$comparisonTable <- renderTable({
       # Filter data based on the selected LTLA
-      data_to_display <- if (input$LTLA == "") {
-        hl_composite_score
-      } else {
-        hl_composite_score |>
-          filter(ltla21_name == input$LTLA)
-      }
-      
-      data_to_display |>
+      data_to_display <- hl_composite_score %>%
+        filter(ltla21_name == input$LTLA | input$LTLA == "") %>%
         select(
+          ltla21_name,
+          ltla21_code,
           `Behavioural risk composite score`,
           `Children & young people composite score`,
           `Physiological risk factors composite score`,
           `Protective measures composite score`
         )
+      
+      data_to_display
     })
     
     # ---- Render the description ----
@@ -81,10 +80,14 @@ compositechartServer <- function(id) {
         title = "Help",
         easyClose = TRUE,
         footer = NULL,
-        "This chart displays composite scores for various local authorities in Wales. 
-         Use the dropdown menu to select a local authority to view its specific composite scores. 
-         The table will update accordingly to show the selected area's scores for different categories."
+        HTML(
+          "<ul>
+            <li>This chart displays composite scores for various local authorities in Wales.</li>
+            <li>Use the dropdown menu to select a local authority to view its specific composite scores.</li>
+            <li>The table will update accordingly to show the selected area's scores for different categories.</li>
+          </ul>"
+        )
       ))
     })
-  })  
+  })
 }
