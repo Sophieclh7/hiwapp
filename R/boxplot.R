@@ -5,6 +5,7 @@ boxplotUI <- function(id) {
     selectInput(ns("selected_ltla"), "Select LTLA:",
                 choices = NULL,  # Choices will be populated in server function
                 selected = NULL),
+    actionButton(ns("help_button"), "Help"),
     plotlyOutput(ns("boxplot"), height = "600px")
   )
 }
@@ -75,5 +76,24 @@ boxplotServer <- function(id) {
       ggplotly(p, tooltip = c("text")) |>
         layout(hovermode = "closest")
     })
+    
+    # ---- Render the Help Button ----
+    observeEvent(input$help_button, {
+      showModal(modalDialog(
+        title = "Help",
+        easyClose = TRUE,
+        footer = NULL,
+        HTML("
+      <ul>
+        <li>This chart displays health index scores by subdomain (behavioural risk factors, childhood and development, physiological risk factors and protective measures) for various local authorities in Wales.</li>
+        <li>Use the dropdown menu to select a local authority to highlight its position on the plot.</li>
+        <li>The chart will update accordingly to show the selected area's scores.</li>
+        <li>Health index scores are calculated for each subdomian by adding the z scores for each indicator in that subdomain for each ltla.</li>
+        <li>For more information on how the score was created, see health index methods button at top of page.</li>
+      <ul>
+      ")
+      ))
+    })
   })
 }
+ 

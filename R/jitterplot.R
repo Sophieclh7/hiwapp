@@ -3,6 +3,7 @@ compJitterUI <- function(id) {
   ns <- NS(id)
   tagList(
     selectInput(ns("ltla_select"), "Select LTLA:", choices = NULL),
+    actionButton(ns("help_button"), "Help"),
   plotlyOutput(ns("compJitter")) 
   )
 }
@@ -67,6 +68,24 @@ compJitterServer <- function(id) {
       
       #Convert to Plotly with tooltip
       ggplotly(p, tooltip = "text")
+    })
+    
+    # ---- Render the Help Button ----
+    # ---- Render the Help Button ----
+    observeEvent(input$help_button, {
+      showModal(modalDialog(
+        title = "Help",
+        easyClose = TRUE,
+        footer = NULL,
+        HTML("
+      <ul>
+        <li>This chart displays health index scores for various local authorities in Wales.</li>
+        <li>Use the dropdown menu to select a local authority to highlight its position on the plot. The chart will update accordingly to show the selected area's scores.</li>
+        <li>Health index scores are calculated by adding the z scores for healthy lives indicators for each LTLA.</li>
+        <li>For more information on how the score was created, see the health index methods button at the top of the page.</li>
+      </ul>
+    ")
+      ))
     })
   })
 }
