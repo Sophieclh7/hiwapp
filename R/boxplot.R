@@ -10,14 +10,14 @@ boxplotUI <- function(id) {
   )
 }
 
-# Server function for boxplot module
+#Server function for boxplot module
 boxplotServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     
-    # Load data
+    #Load data
     hl_data <- get(load("data/hl_composite_score.rda"))
     
-    # Reshape data to long format
+    #Reshape data to long format
     long_data <- hl_data |>
       pivot_longer(
         cols = c("Behavioural risk composite score",
@@ -28,7 +28,7 @@ boxplotServer <- function(id) {
         values_to = "ScoreValue"
       )
     
-    # Update the ScoreType column to use desired labels
+    #Update the ScoreType column to use desired labels
     long_data$ScoreType <- factor(long_data$ScoreType,
                                   levels = c("Behavioural risk composite score",
                                              "Children & young people composite score",
@@ -39,26 +39,26 @@ boxplotServer <- function(id) {
                                              "Physiological risk factors",
                                              "Protective measures"))
     
-    # Add LTLA name to input
+    #Add LTLA name to input
     updateSelectInput(session, "selected_ltla",
                       choices = unique(long_data$ltla21_name))
     
-    # Make sure jitter positions stay consistent
+    #Make sure jitter positions stay consistent
     jittered_data <- long_data |>
       group_by(ScoreType) |>
       mutate(jitter_x = as.numeric(factor(ltla21_name)) * 0.2 - 0.1)  # Fixed jitter width per LTLA
     
-    # Render the boxplot
+    #Render the boxplot
     output$boxplot <- renderPlotly({
       # Highlighted LTLA
       highlighted_ltla <- input$selected_ltla
       
-      # Create a new column for color based on whether the LTLA is selected
+      #Create a new column for color based on whether the LTLA is selected
       jittered_data <- jittered_data |>
         mutate(highlight = ifelse(ltla21_name == highlighted_ltla, "Selected", "Not Selected"),
                text = paste("LTLA: ", ltla21_name, "<br>Score: ", ScoreValue))  # Add text for tooltips
       
-      # Create the boxplot using ggplot
+      #Create the boxplot using ggplot
       p <- ggplot(jittered_data, aes(x = ScoreType, y = ScoreValue)) +
         geom_boxplot(aes(group = ScoreType), alpha = 0.5) +  # Use alpha to adjust boxplot transparency
         geom_point(aes(color = highlight, fill = highlight, text = text),  # Include text for tooltips
@@ -72,12 +72,12 @@ boxplotServer <- function(id) {
         labs(x = "Subdomain", y = "Normalised score", title = "Boxplots of scores for each subdomain") +
         theme(axis.text.x = element_text(angle = 45, hjust = 1))
       
-      # Convert to plotly object with tooltips
+      #Convert to plotly object with tooltips
       ggplotly(p, tooltip = c("text")) |>
         layout(hovermode = "closest")
     })
     
-    # ---- Render the Help Button ----
+    #Render the Help Button
     observeEvent(input$help_button, {
       showModal(modalDialog(
         title = "Help",
