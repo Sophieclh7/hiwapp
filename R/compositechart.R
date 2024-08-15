@@ -3,10 +3,16 @@ compositechartUI <- function(id) {
   ns <- NS(id)
   
   tagList(
+    tags$h2(class = "chart-title", "Health Index Score Chart"),
+    
+    # ---- Help Button ----
+    actionButton(ns("help_button"), "Help"),
+    
+    # ---- Drop Down Menu ----
     selectInput(
-      ns("county"), 
-      "Select County:",
-      choices = c("Select" = "", 
+      ns("LTLA"), 
+      label = "Select an LTLA to view its composite scores:",
+      choices = c("", 
                   "Isle of Anglesey", "Gwynedd", "Conwy", "Denbighshire",
                   "Flintshire", "Wrexham", "Ceredigion", "Pembrokeshire",
                   "Carmarthenshire", "Swansea", "Neath Port Talbot",
@@ -14,10 +20,15 @@ compositechartUI <- function(id) {
                   "Rhondda Cynon Taf", "Caerphilly", "Blaenau Gwent",
                   "Torfaen", "Monmouthshire", "Newport",
                   "Powys", "Merthyr Tydfil")),
+    
+    # Output for comparison table
     tableOutput(ns("comparisonTable")),
+    
+    # Output for description
     textOutput(ns("description"))
   )
-}
+}                 
+# ---- Server Function ----
 # ---- Server Function ----
 compositechartServer <- function(id) {
   moduleServer(id, function(input, output, session) {
@@ -28,27 +39,25 @@ compositechartServer <- function(id) {
     req(exists("hl_composite_score"), "Data frame 'hl_composite_score' not found. Please check your data loading.")
     
     # Verify column names to ensure correct column names are used
-    col_names <- colnames(hl_composite_score)
+    req(
+      all(c("ltla21_name", 
+            "Behavioural risk composite score", 
+            "Children & young people composite score", 
+            "Physiological risk factors composite score", 
+            "Protective measures composite score") %in% colnames(hl_composite_score)),
+      "One or more required columns are missing from the data frame."
+    )
     
-    # Check if the required columns exist
-    req("ltla21_name" %in% col_names, "The data frame does not contain 'ltla21_name' column.")
-    req("Behavioural risk composite score" %in% col_names, "Required column 'Behavioural risk composite score' not found.")
-    req("Children & young people composite score" %in% col_names, "Required column 'Children & young people composite score' not found.")
-    req("Physiological risk factors composite score" %in% col_names, "Required column 'Physiological risk factors composite score' not found.")
-    req("Protective measures composite score" %in% col_names, "Required column 'Protective measures composite score' not found.")
-    
-    # Render the comparison table
     output$comparisonTable <- renderTable({
-      # Filter data based on the selected county
-      data_to_display <- if (input$county == "") {
+      # Filter data based on the selected LTLA
+      data_to_display <- if (input$LTLA == "") {
         hl_composite_score
       } else {
-        hl_composite_score %>%
-          filter(ltla21_name == input$county)
+        hl_composite_score |>
+          filter(ltla21_name == input$LTLA)
       }
       
-      # Select the relevant columns
-      data_to_display %>%
+      data_to_display |>
         select(
           `Behavioural risk composite score`,
           `Children & young people composite score`,
@@ -57,9 +66,25 @@ compositechartServer <- function(id) {
         )
     })
     
-    # Render the description
+    # ---- Render the description ----
     output$description <- renderText({
-      "This table shows the composite scores for the selected county (LTLA) in Wales."
+      if (input$LTLA == "") {
+        "This table shows the composite scores for all counties (LTLAs) in Wales."
+      } else {
+        paste("This table shows the composite scores for", input$LTLA, "in Wales.")
+      }
     })
-  })
+    
+    # ---- Render the Help Button ----
+    observeEvent(input$help_button, {
+      showModal(modalDialog(
+        title = "Help",
+        easyClose = TRUE,
+        footer = NULL,
+        "This chart displays composite scores for various local authorities in Wales. 
+         Use the dropdown menu to select a local authority to view its specific composite scores. 
+         The table will update accordingly to show the selected area's scores for different categories."
+      ))
+    })
+  })  
 }

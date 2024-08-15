@@ -5,7 +5,7 @@ boxplotUI <- function(id) {
     selectInput(ns("selected_ltla"), "Select LTLA:",
                 choices = NULL,  # Choices will be populated in server function
                 selected = NULL),
-  plotlyOutput(ns("boxplot"), height = "600px")
+    plotlyOutput(ns("boxplot"), height = "600px")
   )
 }
 
@@ -54,13 +54,12 @@ boxplotServer <- function(id) {
       
       # Create a new column for color based on whether the LTLA is selected
       jittered_data <- jittered_data |>
-        mutate(highlight = ifelse(ltla21_name == highlighted_ltla, "Selected", "Not Selected"),
-               text = paste("LTLA: ", ltla21_name, "<br>Score: ", ScoreValue))  # Add text for tooltips
+        mutate(highlight = ifelse(ltla21_name == highlighted_ltla, "Selected", "Not Selected"))
       
       # Create the boxplot using ggplot
       p <- ggplot(jittered_data, aes(x = ScoreType, y = ScoreValue)) +
         geom_boxplot(aes(group = ScoreType), alpha = 0.5) +  # Use alpha to adjust boxplot transparency
-        geom_point(aes(color = highlight, fill = highlight, text = text),  # Include text for tooltips
+        geom_point(aes(color = highlight, fill = highlight),  # Remove text aesthetic here
                    position = position_jitter(width = 0.2, seed = 123),  # Use fixed jitter width
                    size = 2, shape = 21) +  # Ensure shape supports filling
         scale_color_manual(values = c("Selected" = "blue", "Not Selected" = "grey"),
@@ -72,7 +71,7 @@ boxplotServer <- function(id) {
         theme(axis.text.x = element_text(angle = 45, hjust = 1))
       
       # Convert to plotly object with tooltips
-      ggplotly(p, tooltip = c("text")) |>
+      ggplotly(p, tooltip = c("text", "color", "fill")) |>
         layout(hovermode = "closest")
     })
   })
