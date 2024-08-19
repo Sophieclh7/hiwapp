@@ -7,25 +7,31 @@ barchartUI <- function(id) {
     # Dropdown menu to select the variable
     selectInput(ns("variable"), 
                 label = "Select Variable", 
-                choices = c("Alcohol misuse",
-                            "Breast Cancer Screening",
+                choices = c("Adult overweight obese",
+                            "Alcohol misuse",
                             "Bowel Cancer Screening",
+                            "Breast Cancer Screening",
                             "Cervical Cancer Screening",
-                            "Diphteria vaccination",
                             "Drug misuse",
                             "Early years development",
                             "Education employment apprenticeship",
                             "Healthy eating",
-                            "Hib vaccination",
-                            "MMR vaccination",
-                            "Polio vaccination",
                             "Literacy score",
+                            "Low birth weight",
+                            "MeningitisB vaccination",
+                            "MMR vaccination",
                             "Numeracy score",
+                            "Physical activity",
+                            "Pneumococcal vaccination",
+                            "Primary absences",
                             "Reception overweight obese",
+                            "Secondary absences",
+                            "Sedentary behaviour",
+                            "Smoking",
                             "Teenage pregnancy",
-                            "Tetanus vaccination",
-                            "Whooping cough vaccination"), 
-                selected = "Alcohol misuse"), # Default selected value
+                            "6 in 1 vaccination"
+                            ), 
+                selected = "Adult overweight obese"), # Default selected value
     
     # Plot output for the bar chart
     plotOutput(ns("barchart")),
@@ -39,20 +45,26 @@ barchartUI <- function(id) {
 barchartServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     # Load the data
-    load("data/hl_raw_data.rda")
+    load("data/hl_composite_score.rda")
     
     # Render the bar chart
     output$barchart <- renderPlot({
-      ggplot(hl_raw_data, aes(x = .data[["Area name"]], y = .data[[input$variable]])) +
+      ggplot(hl_composite_score, aes(x = .data[["ltla21_name"]], y = .data[[input$variable]])) +
         geom_bar(stat = "identity", fill = "steelblue", color = "black") +
         theme_minimal() +
-        labs(title = "Comparison of Raw Counts Across LTLA's in Wales", 
-             x = "County", 
+        labs(title = "Health score barchart by indicator", 
+             x = "Area", 
              y = input$variable) +
         theme(axis.text = element_text(size = 12), 
               axis.title = element_text(size = 14), 
               plot.title = element_text(size = 16, face = "bold")) +
-        coord_flip()
+        coord_flip() +
+        scale_y_continuous(limits = c(0, 130), breaks = seq(0, 130, by = 10),
+                           labels = function(x) {
+                             # Replace y value 100 with "100\nWelsh Average"
+                             ifelse(x == 100, "100\nWelsh Average", as.character(x))
+                           }) +  # Custom y-axis labels
+        geom_hline(yintercept = 100, linetype = "dashed", size = 1.5)  #Thicker dashed line at y = 100
     })
     
     # Descriptions for variables

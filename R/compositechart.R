@@ -55,12 +55,13 @@ compositechartServer <- function(id) {
         filter(ltla21_name == input$LTLA | input$LTLA == "") %>%
         select(
           ltla21_name,
-          ltla21_code,
           `Behavioural risk score`,
           `Children & young people score`,
           `Physiological risk factors score`,
           `Protective measures score`
-        )
+        ) %>%
+        rename("Area name" = ltla21_name) %>%
+        mutate(`Welsh average score` = 100)  #Add the 'Welsh average' column with a value of 100
       
       data_to_display
     })
