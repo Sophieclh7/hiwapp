@@ -20,20 +20,20 @@ boxplotServer <- function(id) {
     #Reshape data to long format
     long_data <- hl_data |>
       pivot_longer(
-        cols = c("Behavioural risk composite score",
-                 "Children & young people composite score",
-                 "Physiological risk factors composite score",
-                 "Protective measures composite score"),
+        cols = c("Behavioural risk score",
+                 "Children & young people score",
+                 "Physiological risk factors score",
+                 "Protective measures score"),
         names_to = "ScoreType",
         values_to = "ScoreValue"
       )
     
     #Update the ScoreType column to use desired labels
     long_data$ScoreType <- factor(long_data$ScoreType,
-                                  levels = c("Behavioural risk composite score",
-                                             "Children & young people composite score",
-                                             "Physiological risk factors composite score",
-                                             "Protective measures composite score"),
+                                  levels = c("Behavioural risk score",
+                                             "Children & young people score",
+                                             "Physiological risk factors score",
+                                             "Protective measures score"),
                                   labels = c("Behavioural risk factors",
                                              "Children and young people",
                                              "Physiological risk factors",
