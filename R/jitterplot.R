@@ -34,7 +34,7 @@ compJitterUI <- function(id) {
   )
 }
 
-#Server function for the compJitter module
+# Server function for the compJitter module
 compJitterServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     
@@ -58,6 +58,10 @@ compJitterServer <- function(id) {
       additional_lines <- seq(85, 115, by = 5)
       labels <- as.character(additional_lines)
       
+      # Add custom x-axis labels including "Welsh Average"
+      x_labels <- labels
+      x_labels[which(labels == "100")] <- "100\nWelsh Average"
+      
       # Highlight the selected LTLA
       hl_data$highlight <- ifelse(hl_data$ltla21_name == input$ltla_select, "Selected", "Not Selected")
       
@@ -67,17 +71,17 @@ compJitterServer <- function(id) {
         geom_jitter(width = 0.2, height = 0, size = 3) +
         geom_hline(yintercept = 0, color = "grey", linewidth = 0.3) +
         geom_vline(xintercept = additional_lines, color = "grey", linewidth = 0.3) +
-        geom_vline(xintercept = 100, colour = "black", linewidth = 0.7) +  # Adjust to the midpoint of your new range
+        geom_vline(xintercept = 100, colour = "black", linewidth = 0.7, linetype = "dashed") +  # Dashed line at x = 100
         scale_x_continuous(
           limits = c(x_min, x_max),
           breaks = additional_lines,
-          labels = labels
+          labels = x_labels
         ) +
-        scale_color_manual(values = c("Selected" = "blue", "Not Selected" = "grey")) +
+        scale_color_manual(values = c("Selected" = "blue", "Not Selected" = "orange")) +
         labs(
           x = "Health Index Score",
-          y = "Counties",
-          title = "Composite Score Jitterplot"
+          y = "Areas",
+          title = "Health Score Jitterplot"
         ) +
         theme_minimal() +
         theme(axis.text.y = element_blank(), # Hides major grid lines and text
@@ -85,10 +89,8 @@ compJitterServer <- function(id) {
               panel.grid.major.y = element_blank(), 
               panel.grid.minor.y = element_blank(),
               panel.grid.major.x = element_blank(),
-              panel.grid.minor.x = element_blank())
-      
-      # Adjust ratio of x to y units, to make plot less tall
-      p <- p + coord_fixed(ratio = 3)
+              panel.grid.minor.x = element_blank()) +
+        coord_fixed(ratio = 3)  # Adjust ratio of x to y units, to make plot less tall
       
       # Convert to Plotly with tooltip
       ggplotly(p, tooltip = "text")
@@ -124,4 +126,3 @@ compJitterServer <- function(id) {
     })
   })
 }
-

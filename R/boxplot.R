@@ -10,14 +10,14 @@ boxplotUI <- function(id) {
   )
 }
 
-#Server function for boxplot module
+# Server function for boxplot module
 boxplotServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     
-    #Load data
+    # Load data
     hl_data <- get(load("data/hl_composite_score.rda"))
     
-    #Reshape data to long format
+    # Reshape data to long format
     long_data <- hl_data |>
       pivot_longer(
         cols = c("Behavioural risk score",
@@ -28,7 +28,7 @@ boxplotServer <- function(id) {
         values_to = "ScoreValue"
       )
     
-    #Update the ScoreType column to use desired labels
+    # Update the ScoreType column to use desired labels
     long_data$ScoreType <- factor(long_data$ScoreType,
                                   levels = c("Behavioural risk score",
                                              "Children & young people score",
@@ -39,45 +39,51 @@ boxplotServer <- function(id) {
                                              "Physiological risk factors",
                                              "Protective measures"))
     
-    #Add LTLA name to input
+    # Add LTLA name to input
     updateSelectInput(session, "selected_ltla",
                       choices = unique(long_data$ltla21_name))
     
-    #Make sure jitter positions stay consistent
+    # Make sure jitter positions stay consistent
     jittered_data <- long_data |>
       group_by(ScoreType) |>
       mutate(jitter_x = as.numeric(factor(ltla21_name)) * 0.2 - 0.1)  # Fixed jitter width per LTLA
     
-    #Render the boxplot
+    # Render the boxplot
     output$boxplot <- renderPlotly({
       # Highlighted LTLA
       highlighted_ltla <- input$selected_ltla
       
-      #Create a new column for color based on whether the LTLA is selected
+      # Create a new column for color based on whether the LTLA is selected
       jittered_data <- jittered_data |>
         mutate(highlight = ifelse(ltla21_name == highlighted_ltla, "Selected", "Not Selected"),
                text = paste("LTLA: ", ltla21_name, "<br>Score: ", ScoreValue))  # Add text for tooltips
       
-      #Create the boxplot using ggplot
+      # Create the boxplot using ggplot
       p <- ggplot(jittered_data, aes(x = ScoreType, y = ScoreValue)) +
         geom_boxplot(aes(group = ScoreType), alpha = 0.5) +  # Use alpha to adjust boxplot transparency
         geom_point(aes(color = highlight, fill = highlight, text = text),  # Include text for tooltips
                    position = position_jitter(width = 0.2, seed = 123),  # Use fixed jitter width
                    size = 2, shape = 21) +  # Ensure shape supports filling
-        scale_color_manual(values = c("Selected" = "blue", "Not Selected" = "grey"),
+        scale_color_manual(values = c("Selected" = "blue", "Not Selected" = "orange"),
                            guide = guide_legend(title = NULL)) +  # Remove legend title
-        scale_fill_manual(values = c("Selected" = "blue", "Not Selected" = "grey"),
+        scale_fill_manual(values = c("Selected" = "blue", "Not Selected" = "orange"),
                           guide = guide_legend(title = NULL)) +  # Remove legend title
         theme_minimal() +
-        labs(x = "Subdomain", y = "Normalised score", title = "Boxplots of scores for each subdomain") +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1))
+        labs(x = "Subdomain", y = "Health score", title = "Health Score Boxplot by Subdomain") +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+        scale_y_continuous(limits = c(80, 120), breaks = seq(80, 120, by = 5),
+                           labels = function(x) {
+                             # Replace y value 100 with "100\nWelsh Average"
+                             ifelse(x == 100, "100\nWelsh Average", as.character(x))
+                           }) +  # Custom y-axis labels
+        geom_hline(yintercept = 100, linetype = "dashed")  # Add dashed line at y = 100
       
-      #Convert to plotly object with tooltips
+      # Convert to plotly object with tooltips
       ggplotly(p, tooltip = c("text")) |>
         layout(hovermode = "closest")
     })
     
-    #Render the Help Button
+    # Render the Help Button
     observeEvent(input$help_button, {
       showModal(modalDialog(
         title = "Help",
@@ -88,12 +94,11 @@ boxplotServer <- function(id) {
         <li>This chart displays health index scores by subdomain (behavioural risk factors, childhood and development, physiological risk factors and protective measures) for various local authorities in Wales.</li>
         <li>Use the dropdown menu to select a local authority to highlight its position on the plot.</li>
         <li>The chart will update accordingly to show the selected area's scores.</li>
-        <li>Health index scores are calculated for each subdomian by adding the z scores for each indicator in that subdomain for each ltla.</li>
+        <li>Health index scores are calculated for each subdomain by adding the z scores for each indicator in that subdomain for each ltla.</li>
         <li>For more information on how the score was created, see health index methods button at top of page.</li>
-      <ul>
+      </ul>
       ")
       ))
-    })
-  })
+    })  # Close observeEvent block here
+  })  # Close moduleServer block here
 }
- 
