@@ -2,7 +2,7 @@
 boxplotUI <- function(id) {
   ns <- NS(id)
   tagList(
-    selectInput(ns("selected_ltla"), "Select LTLA:",
+    selectInput(ns("selected_ltla"), "Select area:",
                 choices = NULL,  # Choices will be populated in server function
                 selected = NULL),
     actionButton(ns("help_button"), "Help"),

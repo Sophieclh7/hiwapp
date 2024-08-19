@@ -27,7 +27,7 @@ compJitterUI <- function(id) {
         p("Tetanus_vaccination - Percentage of children immunised against tetanus by their second birthday."),
         p("Whooping_cough_vaccination - Percentage of children who received the whooping cough vaccine."),
     ),
-    selectInput(ns("ltla_select"), "Select LTLA:", choices = NULL),
+    selectInput(ns("ltla_select"), "Select area:", choices = NULL),
     actionButton(ns("help_button"), "Help"),
     plotlyOutput(ns("compJitter")),
     br()  # Adds a line break

@@ -11,7 +11,7 @@ compositechartUI <- function(id) {
     # ---- Drop Down Menu ----
     selectInput(
       ns("LTLA"), 
-      label = "Select an LTLA to view its composite scores:",
+      label = "Select area:",
       choices = c("", 
                   "Isle of Anglesey", "Gwynedd", "Conwy", "Denbighshire",
                   "Flintshire", "Wrexham", "Ceredigion", "Pembrokeshire",
