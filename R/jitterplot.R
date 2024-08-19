@@ -38,46 +38,44 @@ compJitterUI <- function(id) {
 compJitterServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     
-    #Load data
+    # Load data
     hl_data <- get(load("data/hl_composite_score.rda"))
     
-    #Update ltla dropdown choices
+    # Update ltla dropdown choices
     updateSelectInput(session, "ltla_select", choices = hl_data$ltla21_name)
     
     output$compJitter <- renderPlotly({
-    
-      #Add a random y-axis value for each point
+      
+      # Add a random y-axis value for each point
       set.seed(123)  # for reproducibility
       hl_data$random_y <- runif(nrow(hl_data), min = -1, max = 1)
       
-      #Calculate the mean of the Composite score
-      mean_composite_score <- mean(hl_data$`Composite score`)
+      # Define the new range for x-axis
+      x_min <- 85
+      x_max <- 115
       
-      #Set limits of x axis to maximum composite score
-      x_max <- max(abs(hl_data$`Composite score`))
+      # Define points for vertical grid lines in the new range
+      additional_lines <- seq(85, 115, by = 5)
+      labels <- as.character(additional_lines)
       
-      #Define points to include vertical grid lines
-      additional_lines <- c(-25, -20, -15, -10, -5, 5, 10, 15, 20, 25)
-      labels <- as.character(c(additional_lines, 0))  #Include 0 in labels, not included in additional_lines as want to make line darke
-      
-      #Highlight the selected LTLA
+      # Highlight the selected LTLA
       hl_data$highlight <- ifelse(hl_data$ltla21_name == input$ltla_select, "Selected", "Not Selected")
       
-      #Create the jitterplot
+      # Create the jitterplot
       p <- ggplot(hl_data, aes(x = `Composite score`, y = random_y, color = highlight, 
                                text = paste("LTLA Name:", ltla21_name, "<br>Health Index Score:", `Composite score`))) +
         geom_jitter(width = 0.2, height = 0, size = 3) +
         geom_hline(yintercept = 0, color = "grey", linewidth = 0.3) +
         geom_vline(xintercept = additional_lines, color = "grey", linewidth = 0.3) +
-        geom_vline(xintercept = 0, colour = "black", linewidth = 0.7) +
+        geom_vline(xintercept = 100, colour = "black", linewidth = 0.7) +  # Adjust to the midpoint of your new range
         scale_x_continuous(
-          limits = c(-x_max, x_max),
-          breaks = c(additional_lines, 0),
+          limits = c(x_min, x_max),
+          breaks = additional_lines,
           labels = labels
         ) +
         scale_color_manual(values = c("Selected" = "blue", "Not Selected" = "grey")) +
         labs(
-          x = "Normalised units",
+          x = "Health Index Score",
           y = "Counties",
           title = "Composite Score Jitterplot"
         ) +
@@ -89,14 +87,14 @@ compJitterServer <- function(id) {
               panel.grid.major.x = element_blank(),
               panel.grid.minor.x = element_blank())
       
-      #Adjust ration of x to y units, to make plot less tall
+      # Adjust ratio of x to y units, to make plot less tall
       p <- p + coord_fixed(ratio = 3)
       
-      #Convert to Plotly with tooltip
+      # Convert to Plotly with tooltip
       ggplotly(p, tooltip = "text")
     })
     
-    #Render the Help Button
+    # Render the Help Button
     observeEvent(input$help_button, {
       showModal(modalDialog(
         title = "Help",
@@ -126,3 +124,4 @@ compJitterServer <- function(id) {
     })
   })
 }
+
