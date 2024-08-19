@@ -11,7 +11,7 @@ compositechartUI <- function(id) {
     # ---- Drop Down Menu ----
     selectInput(
       ns("LTLA"), 
-      label = "Select an LTLA to view its composite scores:",
+      label = "Select area:",
       choices = c("", 
                   "Isle of Anglesey", "Gwynedd", "Conwy", "Denbighshire",
                   "Flintshire", "Wrexham", "Ceredigion", "Pembrokeshire",
@@ -42,10 +42,10 @@ compositechartServer <- function(id) {
     req(
       all(c("ltla21_name", 
             "ltla21_code",
-            "Behavioural risk composite score", 
-            "Children & young people composite score", 
-            "Physiological risk factors composite score", 
-            "Protective measures composite score") %in% colnames(hl_composite_score)),
+            "Behavioural risk score", 
+            "Children & young people score", 
+            "Physiological risk factors score", 
+            "Protective measures score") %in% colnames(hl_composite_score)),
       "One or more required columns are missing from the data frame."
     )
     
@@ -56,10 +56,10 @@ compositechartServer <- function(id) {
         select(
           ltla21_name,
           ltla21_code,
-          `Behavioural risk composite score`,
-          `Children & young people composite score`,
-          `Physiological risk factors composite score`,
-          `Protective measures composite score`
+          `Behavioural risk score`,
+          `Children & young people score`,
+          `Physiological risk factors score`,
+          `Protective measures score`
         )
       
       data_to_display
