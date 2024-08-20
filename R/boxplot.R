@@ -11,6 +11,12 @@ boxplotUI <- function(id) {
 }
 
 # Server function for boxplot module
+library(shiny)
+library(ggplot2)
+library(plotly)
+library(dplyr)
+library(tidyr)
+
 boxplotServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     
@@ -80,7 +86,29 @@ boxplotServer <- function(id) {
       
       # Convert to plotly object with tooltips
       ggplotly(p, tooltip = c("text")) |>
-        layout(hovermode = "closest")
+        layout(
+          hovermode = "closest",
+          annotations = list(
+            list(
+              x = 0.5,  # Adjusted x value to center label
+              y = 0.65,  # Adjusted y value to bring label closer to plot
+              text = "Better Than Average",
+              showarrow = FALSE,
+              xref = "paper",
+              yref = "paper",
+              font = list(size = 10)
+            ),
+            list(
+              x = 0.5,  # Adjusted x value to center label
+              y = 0.35,  # Adjusted y value to bring label closer to plot
+              text = "Worse Than Average",
+              showarrow = FALSE,
+              xref = "paper",
+              yref = "paper",
+              font = list(size = 10)
+            )
+          )
+        )
     })
     
     # Render the Help Button
