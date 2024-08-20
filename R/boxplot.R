@@ -62,7 +62,8 @@ boxplotServer <- function(id) {
       # Create a new column for color based on whether the LTLA is selected
       jittered_data <- jittered_data |>
         mutate(highlight = ifelse(ltla21_name == highlighted_ltla, "Selected", "Not Selected"),
-               text = paste("LTLA: ", ltla21_name, "<br>Score: ", ScoreValue))  # Add text for tooltips
+               # Round ScoreValue to the nearest whole number and format text for tooltips
+               text = paste("Area name: ", ltla21_name, "<br>Subdomain score: ", round(ScoreValue))) 
       
       # Create the boxplot using ggplot
       p <- ggplot(jittered_data, aes(x = ScoreType, y = ScoreValue)) +

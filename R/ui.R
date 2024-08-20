@@ -37,7 +37,11 @@ ui <- fluidPage(
         h3("Terms and Definitions"),
         p("Here you can find definitions and explanations for various terms used in the application. This section will help you better understand the data and metrics presented."),
         glossaryUI("glossary") 
-      )
+      ),
+      tabPanel(
+        "Methodology",
+        methodologyUI("glossary") 
     )
   )
+)
 )
