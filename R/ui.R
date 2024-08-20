@@ -8,8 +8,10 @@ ui <- fluidPage(
         h1("Welcome to the Health Inequalities Explorer Wales", 
            style = "text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px;"),
         h2("Overview", style = "font-size: 20px;"),
-        p("This application allows users to explore and compare health data across different local authorities in Wales. Navigate through the tabs to view indicator and subdomain scores. This app uses the data from the 'Healthy Lives' domain of the Health Index. 'Healthy Lives' consists of 'Behavioural Risk Factors' , 'Children and Young People', 'Physiological Risk Factors' and 'Protective Measures'. These subdomains contain their own respective indicators."  ),
-        p("For detailed explanations and methods used, please refer to the glossary tab.")
+        p("This application allows users to explore and compare health data across different local authorities in Wales. Navigate through the tabs to view indicator and subdomain scores. This app uses the data from the 'Healthy Lives' domain of the Health Index. 'Healthy Lives' consists of 'Behavioural Risk Factors', 'Children and Young People', 'Physiological Risk Factors', and 'Protective Measures'. These subdomains contain their own respective indicators."  ),
+        p("For detailed explanations and methods used, please refer to the glossary tab."),
+        img(src = "Flow_chart.png", height = "500px", style = "display: block; margin-left: auto; margin-right: auto;"),
+        p("The chart above shows how the Health Index Wales is broken down into Domains, which are then broken down into Subdomains, which are then broken down into Indicators.", style = "text-align: center;")
       ),
       tabPanel(
         "Health Index Score",

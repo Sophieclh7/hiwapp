@@ -34,7 +34,11 @@ compJitterUI <- function(id) {
   )
 }
 
-# Server function for the compJitter module
+library(shiny)
+library(ggplot2)
+library(plotly)
+library(dplyr)
+
 compJitterServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     
@@ -92,8 +96,30 @@ compJitterServer <- function(id) {
               panel.grid.minor.x = element_blank()) +
         coord_fixed(ratio = 3)  # Adjust ratio of x to y units, to make plot less tall
       
-      # Convert to Plotly with tooltip
-      ggplotly(p, tooltip = "text")
+      # Convert to Plotly
+      ggplotly(p, tooltip = "text") %>%
+        layout(
+          annotations = list(
+            list(
+              x = 105, 
+              y = 0.9,  # Adjusted y value to bring the label closer to the plot
+              text = "Better Than Average", 
+              showarrow = FALSE, 
+              xref = "x", 
+              yref = "paper",
+              font = list(size = 12)
+            ),
+            list(
+              x = 95, 
+              y = 0.9,  # Adjusted y value to bring the label closer to the plot
+              text = "Worse Than Average", 
+              showarrow = FALSE, 
+              xref = "x", 
+              yref = "paper",
+              font = list(size = 12)
+            )
+          )
+        )
     })
     
     # Render the Help Button

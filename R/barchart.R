@@ -41,7 +41,6 @@ barchartUI <- function(id) {
   )
 }
 
-# ---- server function ----
 barchartServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     # Load the data
@@ -49,6 +48,16 @@ barchartServer <- function(id) {
     
     # Render the bar chart
     output$barchart <- renderPlot({
+      # Calculate the mean of the selected variable
+      mean_value <- mean(hl_composite_score[[input$variable]], na.rm = TRUE)
+      
+      # Create a dummy LTLA entry for the additional point
+      dummy_data <- data.frame(
+        ltla21_name = "Additional Point",
+        value = 110 # Set this to the desired y-value
+      )
+      
+      # Create the bar chart with ggplot2
       ggplot(hl_composite_score, aes(x = .data[["ltla21_name"]], y = .data[[input$variable]])) +
         geom_bar(stat = "identity", fill = "steelblue", color = "black") +
         theme_minimal() +
@@ -64,7 +73,15 @@ barchartServer <- function(id) {
                              # Replace y value 100 with "100\nWelsh Average"
                              ifelse(x == 100, "100\nWelsh Average", as.character(x))
                            }) +  # Custom y-axis labels
-        geom_hline(yintercept = 100, linetype = "dashed", size = 1.5)  #Thicker dashed line at y = 100
+        geom_hline(yintercept = 100, linetype = "dashed", size = 1.5) +  # Thicker dashed line at y = 100
+        
+        # Add annotations for "Worse than mean" and "Better than mean"
+        annotate("text", x = -Inf, y = mean_value, label = "Better than mean", hjust = -0.2, vjust = -39, size = 4) +
+        annotate("text", x = -Inf, y = mean_value, label = "Worse than mean", hjust = 1.1, vjust = -39, size = 4) +
+        
+        # Add the dummy point
+        geom_point(data = dummy_data, aes(x = ltla21_name, y = value), 
+                   color = "red", size = 3, shape = 18) # Customize the point as needed
     })
     
     # Descriptions for variables

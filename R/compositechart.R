@@ -50,6 +50,15 @@ compositechartServer <- function(id) {
     )
     
     output$comparisonTable <- renderTable({
+      # Create the Welsh average row
+      welsh_average_row <- tibble::tibble(
+        `Area name` = "Welsh average",
+        `Behavioural risk score` = 100,
+        `Children & young people score` = 100,
+        `Physiological risk factors score` = 100,
+        `Protective measures score` = 100
+      )
+      
       # Filter data based on the selected LTLA
       data_to_display <- hl_composite_score %>%
         filter(ltla21_name == input$LTLA | input$LTLA == "") %>%
@@ -60,8 +69,10 @@ compositechartServer <- function(id) {
           `Physiological risk factors score`,
           `Protective measures score`
         ) %>%
-        rename("Area name" = ltla21_name) %>%
-        mutate(`Welsh average score` = 100)  #Add the 'Welsh average' column with a value of 100
+        rename("Area name" = ltla21_name)
+      
+      # Bind the Welsh average row to the top of the table
+      data_to_display <- bind_rows(welsh_average_row, data_to_display)
       
       data_to_display
     })
