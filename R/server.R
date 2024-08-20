@@ -3,4 +3,5 @@ server <- function(input, output, session) {
   boxplotServer("boxplotModule")
   compositechartServer("compositechartModule")
   barchartServer("barchartModule")
+  glossaryServer("glossaryModule")
 }
