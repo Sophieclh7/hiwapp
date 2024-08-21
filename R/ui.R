@@ -37,15 +37,17 @@ ui <- fluidPage(
       ),
       tabPanel(
         "Glossary",
-        h2("Glossary"),
-        h3("Terms and Definitions"),
-        p("Here you can find definitions and explanations for various terms used in the application. This section will help you better understand the data and metrics presented."),
         glossaryUI("glossary") 
       ),
       tabPanel(
         "Future Developments",
         h2("Future Developments"),
-        p("This section will outline potential future improvements and features for the Healthy Lives Web Application.")
+        p("This section will outline potential future improvements and features for the Healthy Lives Web Application."),
+        p("We would like to render the barchart and the subdomain score chart as plotly objects so they can be downloaded and when you hover over bars on barchart it will display composite score and raw score"),
+        p("We'd like to shorten the range of the x axis on the barchart but couldn't find a way to do so"),
+        p("Possibly get rid of the median line on boxplot - it looks confusing because there is also Welsh average line"),
+        p("Make sure metadata link in methodology tab works on Mac processors"),
+        p("Make sure text is all same size on subdomains tab")
       ),
       tabPanel(
         "Methodology",

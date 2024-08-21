@@ -4,7 +4,7 @@ compositechartUI <- function(id) {
   ns <- NS(id)
   
   tagList(
-    tags$h2("Health Index Score Chart"),
+    tags$h2("Subdomain Score Chart"),
     
     # ---- Drop Down Menu ----
     selectInput(
@@ -79,27 +79,10 @@ compositechartServer <- function(id) {
     # ---- Render the description ----
     output$description <- renderText({
       if (input$LTLA == "") {
-        "This table shows the composite scores for all counties (LTLAs) in Wales."
+        "This table shows the subdomain scores for areas in Wales."
       } else {
         paste("This table shows the subdomain scores for", input$LTLA, "in Wales.")
       }
-    })
-    
-    # ---- Render the Help Button ----
-    observeEvent(input$help_button, {
-      showModal(modalDialog(
-        title = "Help",
-        easyClose = TRUE,
-        footer = NULL,
-        HTML(
-          "<ul>
-            <li>This chart displays composite scores for various local authorities in Wales.</li>
-            <li>Use the dropdown menu to select a local authority to view its specific composite scores.</li>
-            <li>The table will update accordingly to show the selected area's scores for different categories.</li>
-            <li>The Welsh average row provides a benchmark with a score of 100 for all categories.</li>
-          </ul>"
-        )
-      ))
     })
   })
 }
