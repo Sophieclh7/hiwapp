@@ -8,7 +8,7 @@ ui <- fluidPage(
         h1("Welcome to the Health Inequalities Explorer Wales", 
            style = "text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px;"),
         h2("Overview", style = "font-size: 20px;"),
-        p("This application allows users to explore and compare health data across different local authorities in Wales. Navigate through the tabs to view indicator and subdomain scores. This app uses the data from the 'Healthy Lives' domain of the Health Index. 'Healthy Lives' consists of 'Behavioural Risk Factors', 'Children and Young People', 'Physiological Risk Factors', and 'Protective Measures'. These subdomains contain their own respective indicators."  ),
+        p("This application allows users to explore and compare health data across different areas (LTLAs) in Wales. Navigate through the tabs to view indicator and subdomain scores. This app uses the data from the 'Healthy Lives' domain of the Health Index. 'Healthy Lives' consists of 'Behavioural Risk Factors', 'Children and Young People', 'Physiological Risk Factors', and 'Protective Measures'. These subdomains contain their own respective indicators."  ),
         p("For detailed explanations, methods used, and additional information, please refer to the metadata available at ", 
           a("this link", href = "https://github.com/humaniverse/health-index-wales/blob/main/metadata.md")),
         img(src = "Flow_chart.png", height = "500px", style = "display: block; margin-left: auto; margin-right: auto;"),
@@ -16,21 +16,21 @@ ui <- fluidPage(
       ),
       tabPanel(
         "Healthy Lives Score",
-        h2("Healthy Lives Score - Jitter Plot"),
-        p("This visualises Health Index Scores for the Local Authorities in Wales. The jitter plot displays these scores where each LTLA is represented as a point on the plot."),
+        h2("Healthy Lives Score - Jitter Plot", style = "font-size: 20px; font-weight: bold;"),
+        p("The jitter plot displays the Healthy Lives Scores by area in Wales which is represented as a dot on the plot.", style = "font-size: 16px;"),
         compJitterUI("compJitterModule") 
       ),
       tabPanel(
         "Subdomain Scores",
-        h2("Subdomain Scores"),
-        h3("There are 4 subdomains within the 'Healthy Lives Domain': 'Behavioural Risk Factors', 'Children and Young People', 'Physiological Risk Factors', and 'Protective Measures'."),
+        h2("Subdomain Scores", style = "font-size: 20px; font-weight: bold;"),
+        h3("There are 4 subdomains within 'Healthy Lives': 'Behavioural Risk Factors', 'Children and Young People', 'Physiological Risk Factors', and 'Protective Measures'.", style = "font-size: 16px;"),
         boxplotUI("boxplotModule"),  
         compositechartUI("compositechartModule") 
       ),
       tabPanel(
         "Indicator Scores",
-        h2("Indicator Scores"),
-        h3("The chart displays the composite score for each indicator by region.", style = "font-size: 16px;"),
+        h2("Indicator Scores", style = "font-size: 20px; font-weight: bold;"),
+        h3("This bar chart displays the scores for each indicator, select an indicator from the drop down menu to see its standardized score for each area.", style = "font-size: 16px;"),
         barchartUI("barchartModule")  
       ),
       tabPanel(

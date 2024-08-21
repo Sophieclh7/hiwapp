@@ -9,3 +9,4 @@ library(shinyjs)
 appLaunch <- function() {
   shinyApp(ui, server)
 }
+
