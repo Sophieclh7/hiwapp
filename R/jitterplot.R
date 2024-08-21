@@ -1,34 +1,30 @@
-# UI function for the compJitter module
+# ---- UI function ----
 compJitterUI <- function(id) {
   ns <- NS(id)
-  tagList(
-    selectInput(ns("ltla_select"), "Select area:", choices = NULL),
-    actionButton(ns("help_button"), "Help"),
-    plotlyOutput(ns("compJitter")),
-    br()  # Adds a line break
+  tagList( # List of items to display on page
+    selectInput(ns("ltla_select"), "Select area:", choices = NULL), # Adds dropdown menu
+    actionButton(ns("help_button"), "Help"), # Adds help button
+    plotlyOutput(ns("compJitter")) # Adds jitterplot
   )
 }
 
-# Server function for compJitter module
+# ---- Server function ----
 compJitterServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     
     # Load data
-    hl_data <- get(load("data/hl_composite_score.rda"))
-    
-    # Check if 'Composite score' column exists
-    if (!"Composite score" %in% colnames(hl_data)) {
-      stop("The column 'Composite score' does not exist in the data.")
-    }
+    load("data/hl_composite_score.rda")
     
     # Update ltla dropdown choices
     updateSelectInput(session, "ltla_select", choices = hl_data$ltla21_name)
     
+    # Set seed for reproducibility
+    set.seed(123)
+    
+    # Add a random y-axis value for each point
+    hl_data$random_y <- runif(nrow(hl_data), min = -1, max = 1)
+    
     output$compJitter <- renderPlotly({
-      
-      # Add a random y-axis value for each point
-      set.seed(123)  # for reproducibility
-      hl_data$random_y <- runif(nrow(hl_data), min = -1, max = 1)
       
       # Define the new range for x-axis
       x_min <- 85
