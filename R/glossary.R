@@ -9,20 +9,16 @@ glossaryUI <- function(id) {
     
     HTML(paste0("
       <h4>Glossary:</h4>
-      <dl>
+        <dl>
+      <dt><strong>Area:</strong></dt>
+        <dd><dd>The areas are the lower tier local authorities in Wales</dd>
+
+
         <dt><strong>Bar chart:</strong></dt>
      <dd>A bar chart displays values for different categories using a series of rectangular bars. Each bar represents an area, with its length corresponding to the value shown on the x-axis. When you hover over a bar, the specific value for that area is displayed. The chart updates dynamically based on the selected indicator, reflecting various outcomes. A dotted line indicates the Welsh average, allowing for comparison between this average and the values for individual areas.</dd>
        
         <dt><strong>Boxplot:</strong></dt>
         <dd><dd>A jittered box plot visualises the distribution of data through dots that represent individual areas. Each dot provides details about the specific area and its subdomain score when hovered over. The plot includes a box that shows the middle 50% of the data (the interquartile range), with whiskers extending to indicate the range of values, excluding extreme outliers. The dots are jittered to reduce overlap and make individual data points more distinguishable, helping you to see both the distribution and specific values clearly.</dd>
-
-        
-        <dt><strong>Composite score:</strong></dt>
-        <dd>This is a single score made from combining several different....</dd>
-        
-        
-        <dt><strong>Composite score chart:</strong></dt>
-        <dd>This is a visual representation of combined scores.....</dd>
         
         
         <dt><strong>Domain:</strong></dt>
@@ -30,15 +26,11 @@ glossaryUI <- function(id) {
         
        
         <dt><strong>Interquartile range (IQR):</strong></dt>
-        <dd>This measures the spread of the middle 50% of the data. It shows the range between the 25th and 75th percentiles, helping you see how concentrated or spread out the central part of the data is.</dd>
+        <dd>This measures the spread of the middle 50% of the data. It shows the range between the 25th (Q1) and 75th (Q3) percentiles, helping you see how concentrated or spread out the central part of the data is.</dd>
         
         
         <dt><strong>Jitterplot:</strong></dt>
         <dd>A jitterplot displays individual data points with a slight random shift to avoid overlap. It helps in visualising how data points are distributed without clustering.</dd>
-        
-        
-        <dt><strong>LTLA (Lower Tier Authority Area):</strong></dt>
-        <dd>This refers to a specific geographic region or administrative area, like a city or district, that local authorities manage. When you see 'area' in the charts, it represents these local regions where data is collected and analysed.</dd>
         
         
         <dt><strong>Mean:</strong></dt>
@@ -56,13 +48,19 @@ glossaryUI <- function(id) {
         <dt><strong>Scatterplot:</strong></dt>
         <dd>A scatterplot is a chart where data points are shown as dots on a graph. It helps to see if there is a pattern or relationship between two different variables, such as indicator score, subdomain score or healthy lives score within the wider domain.</dd>
         
+        <dt><strong>Score:</strong></dt>
+        <dd>See methodology tab for how scores were created</dd>
        
         <dt><strong>Subdomain:</strong></dt>
-        <dd>A subdomain is a smaller, more specific part of a larger domain. For example, within the domain of 'Healthy Lives,', an example of a domain is 'Behavioural Risk Factors' </dd>
+        <dd>A subdomain is a smaller, more specific part of a larger domain. For example, within the domain of 'Healthy Lives', an example of a subdomain is 'Behavioural Risk Factors' </dd>
+        
+        
+        <dt><strong>Subdomain score chart:</strong></dt>
+        <dd>Chart containing subdomain scores for each area, compared to Welsh average score</dd>
+        
         
         <dt><strong>Z-Score:</strong></dt>
-       
-        <dd>A Z-Score tells you how much a particular value is different from the average value. A Z-Score of 0 means the value is exactly average, while positive or negative scores show how much higher or lower it is compared to the average.The mean of the Z-Scores make up the composite score in this application</dd>
+        <dd>A Z-Score tells you how much a particular value is different from the average value. A Z-Score of 0 means the value is exactly average, while positive or negative scores show how much higher or lower it is compared to the average.</dd>
       </dl>
     "))
   )
