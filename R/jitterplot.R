@@ -59,9 +59,9 @@ compJitterServer <- function(id) {
         ) +
         scale_color_manual(values = c("Selected" = "blue", "Not Selected" = "orange")) +
         labs(
-          x = "Health Index Score",
+          x = "Healthy Lives Score",
           y = "Areas",
-          title = "Health Score Jitterplot"
+          title = "Healthy Lives Jitterplot"
         ) +
         theme_minimal() +
         theme(axis.text.y = element_blank(), # Hides major grid lines and text
