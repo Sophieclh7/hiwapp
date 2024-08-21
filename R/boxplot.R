@@ -2,8 +2,8 @@
 boxplotUI <- function(id) {
   ns <- NS(id)
   tagList(
-    selectInput(ns("selected_ltla"), "Select area:", choices = NULL),  # Dropdown, choices added in server
     actionButton(ns("help_button"), "Help"), # Help button
+    selectInput(ns("selected_ltla"), "Select area:", choices = NULL),  # Dropdown, choices added in server
     plotlyOutput(ns("boxplot"), height = "600px"), # Boxplot
     shinyjs::useShinyjs(),  # Include shinyjs
     actionLink(ns("toggle_method_info"), "How to read the boxplots ↓"), # Dropdown for boxplot diagram

@@ -2,8 +2,8 @@
 compJitterUI <- function(id) {
   ns <- NS(id)
   tagList( # List of items to display on page
-    selectInput(ns("ltla_select"), "Select area:", choices = NULL), # Adds dropdown menu
     actionButton(ns("help_button"), "Help"), # Adds help button
+    selectInput(ns("ltla_select"), "Select area:", choices = NULL), # Adds dropdown menu
     plotlyOutput(ns("compJitter")) # Adds jitterplot
   )
 }
