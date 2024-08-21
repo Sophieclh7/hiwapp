@@ -51,7 +51,8 @@ boxplotServer <- function(id) {
       # Add highlight and tooltip text
       jittered_data <- jittered_data |>
         mutate(highlight = ifelse(ltla21_name == highlighted_ltla, "Selected", "Not Selected"),
-               text = paste("LTLA: ", ltla21_name, "<br>Score: ", ScoreValue))
+               # Round ScoreValue to the nearest whole number and format text for tooltips
+               text = paste("Area name: ", ltla21_name, "<br>Subdomain score: ", round(ScoreValue))) 
       
       # Create the boxplot
       p <- ggplot(jittered_data, aes(x = ScoreType, y = ScoreValue)) +

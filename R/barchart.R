@@ -30,7 +30,7 @@ barchartUI <- function(id) {
                             "Smoking",
                             "Teenage pregnancy",
                             "6 in 1 vaccination"
-                            ), 
+                ), 
                 selected = "Adult overweight obese"), # Default selected value
     
     # Plot output for the bar chart
@@ -50,12 +50,6 @@ barchartServer <- function(id) {
     output$barchart <- renderPlot({
       # Calculate the mean of the selected indicator
       mean_value <- mean(hl_composite_score[[input$indicator]], na.rm = TRUE)
-      
-      # Create a dummy LTLA entry for the additional point
-      dummy_data <- data.frame(
-        ltla21_name = "Additional Point",
-        value = 110 # Set this to the desired y-value
-      )
       
       # Create the bar chart with ggplot2
       ggplot(hl_composite_score, aes(x = .data[["ltla21_name"]], y = .data[[input$indicator]])) +
@@ -77,11 +71,7 @@ barchartServer <- function(id) {
         
         # Add annotations for "Worse than mean" and "Better than mean"
         annotate("text", x = -Inf, y = mean_value, label = "Better than mean", hjust = -0.2, vjust = -39, size = 4) +
-        annotate("text", x = -Inf, y = mean_value, label = "Worse than mean", hjust = 1.1, vjust = -39, size = 4) +
-        
-        # Add the dummy point
-        geom_point(data = dummy_data, aes(x = ltla21_name, y = value), 
-                   color = "red", size = 3, shape = 18) # Customize the point as needed
+        annotate("text", x = -Inf, y = mean_value, label = "Worse than mean", hjust = 1.1, vjust = -39, size = 4)
     })
     
     # Descriptions for indicators

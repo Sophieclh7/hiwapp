@@ -34,11 +34,7 @@ compJitterUI <- function(id) {
   )
 }
 
-library(shiny)
-library(ggplot2)
-library(plotly)
-library(dplyr)
-
+#Server function for compJitter module
 compJitterServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     
@@ -71,7 +67,7 @@ compJitterServer <- function(id) {
       
       # Create the jitterplot
       p <- ggplot(hl_data, aes(x = `Composite score`, y = random_y, color = highlight, 
-                               text = paste("LTLA Name:", ltla21_name, "<br>Health Index Score:", `Composite score`))) +
+                               text = paste("Area Name:", ltla21_name, "<br>Healthy Lives Score:", round(`Composite score`)))) +
         geom_jitter(width = 0.2, height = 0, size = 3) +
         geom_hline(yintercept = 0, color = "grey", linewidth = 0.3) +
         geom_vline(xintercept = additional_lines, color = "grey", linewidth = 0.3) +

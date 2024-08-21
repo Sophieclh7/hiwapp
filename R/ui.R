@@ -44,8 +44,14 @@ ui <- fluidPage(
         "Future Developments",
         h2("Future Developments"),
         p("This section will outline potential future improvements and features for the Healthy Lives Web Application.")
-      )
-     
-      )
+      ),
+      tabPanel(
+        "Methodology",
+        methodologyUI("methodology")
+)
+      
     )
   )
+)
+  
+
