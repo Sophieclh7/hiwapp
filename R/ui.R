@@ -9,27 +9,28 @@ ui <- fluidPage(
            style = "text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px;"),
         h2("Overview", style = "font-size: 20px;"),
         p("This application allows users to explore and compare health data across different local authorities in Wales. Navigate through the tabs to view indicator and subdomain scores. This app uses the data from the 'Healthy Lives' domain of the Health Index. 'Healthy Lives' consists of 'Behavioural Risk Factors', 'Children and Young People', 'Physiological Risk Factors', and 'Protective Measures'. These subdomains contain their own respective indicators."  ),
-        p("For detailed explanations and methods used, please refer to the glossary tab."),
+        p("For detailed explanations, methods used, and additional information, please refer to the metadata available at ", 
+          a("this link", href = "https://github.com/humaniverse/health-index-wales/blob/main/metadata.md")),
         img(src = "Flow_chart.png", height = "500px", style = "display: block; margin-left: auto; margin-right: auto;"),
-        p("The chart above shows how the Health Index Wales consists of Domains, of which this app uses Healthy Lives. Healthy Lives consists of Subdomains, which each consist of a group of indicators. For information about what each indicator is measuring, please see Metadata:", 
-          a("Metadata", href = "https://github.com/Sophieclh7/health-index-wales/blob/main/metadata.md"))
+        p("The chart above shows how the Health Index Wales is broken down into Domains, which are then broken down into Subdomains, which are then broken down into Indicators.", style = "text-align: center;")
       ),
       tabPanel(
-        "Health Index Score",
-        h2("Health Index Score"),
+        "Healthy Lives Score",
+        h2("Healthy Lives Score - Jitter Plot"),
+        p("This visualises Health Index Scores for the Local Authorities in Wales. The jitter plot displays these scores where each LTLA is represented as a point on the plot."),
         compJitterUI("compJitterModule") 
       ),
       tabPanel(
         "Subdomain Scores",
         h2("Subdomain Scores"),
-        h3("This tab contains visualizations related to subdomain scores."),
+        h3("There are 4 subdomains within the 'Healthy Lives Domain': 'Behavioural Risk Factors', 'Children and Young People', 'Physiological Risk Factors', and 'Protective Measures'."),
         boxplotUI("boxplotModule"),  
         compositechartUI("compositechartModule") 
       ),
       tabPanel(
         "Indicator Scores",
         h2("Indicator Scores"),
-        h3("The chart displays the composite score for each indicator.", style = "font-size: 16px;"),
+        h3("The chart displays the composite score for each indicator by region.", style = "font-size: 16px;"),
         barchartUI("barchartModule")  
       ),
       tabPanel(
@@ -40,9 +41,17 @@ ui <- fluidPage(
         glossaryUI("glossary") 
       ),
       tabPanel(
+        "Future Developments",
+        h2("Future Developments"),
+        p("This section will outline potential future improvements and features for the Healthy Lives Web Application.")
+      ),
+      tabPanel(
         "Methodology",
-        methodologyUI("glossary") 
+        methodologyUI("methodology")
+)
+      
     )
   )
 )
-)
+  
+

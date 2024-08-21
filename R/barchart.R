@@ -4,9 +4,9 @@ barchartUI <- function(id) {
   
   # Define the UI elements
   tagList(
-    # Dropdown menu to select the variable
-    selectInput(ns("variable"), 
-                label = "Select Variable", 
+    # Dropdown menu to select the indicator
+    selectInput(ns("indicator"), 
+                label = "Select indicator", 
                 choices = c("Adult overweight obese",
                             "Alcohol misuse",
                             "Bowel Cancer Screening",
@@ -30,7 +30,7 @@ barchartUI <- function(id) {
                             "Smoking",
                             "Teenage pregnancy",
                             "6 in 1 vaccination"
-                            ), 
+                ), 
                 selected = "Adult overweight obese"), # Default selected value
     
     # Plot output for the bar chart
@@ -46,17 +46,18 @@ barchartServer <- function(id) {
     # Load the data
     load("data/hl_composite_score.rda")
     
+    # Render the bar chart
     output$barchart <- renderPlot({
-      # Calculate the mean of the selected variable
-      mean_value <- mean(hl_composite_score[[input$variable]], na.rm = TRUE)
+      # Calculate the mean of the selected indicator
+      mean_value <- mean(hl_composite_score[[input$indicator]], na.rm = TRUE)
       
       # Create the bar chart with ggplot2
-      ggplot(hl_composite_score, aes(x = ltla21_name, y = .data[[input$variable]])) +
-        geom_bar(stat = "identity", fill = "lightblue", color = "black") +
+      ggplot(hl_composite_score, aes(x = .data[["ltla21_name"]], y = .data[[input$indicator]])) +
+        geom_bar(stat = "identity", fill = "steelblue", color = "black") +
         theme_minimal() +
         labs(title = "Health score barchart by indicator", 
              x = "Area", 
-             y = input$variable) +
+             y = input$indicator) +
         theme(axis.text = element_text(size = 12), 
               axis.title = element_text(size = 14), 
               plot.title = element_text(size = 16, face = "bold")) +
@@ -66,14 +67,14 @@ barchartServer <- function(id) {
                              # Replace y value 100 with "100\nWelsh Average"
                              ifelse(x == 100, "100\nWelsh Average", as.character(x))
                            }) +  # Custom y-axis labels
-        geom_hline(yintercept = 100, linetype = "dashed", size = 1) +  # Thicker dashed line at y = 100
+        geom_hline(yintercept = 100, linetype = "dashed", size = 1.5) +  # Thicker dashed line at y = 100
         
         # Add annotations for "Worse than mean" and "Better than mean"
         annotate("text", x = -Inf, y = mean_value, label = "Better than mean", hjust = -0.2, vjust = -39, size = 4) +
         annotate("text", x = -Inf, y = mean_value, label = "Worse than mean", hjust = 1.1, vjust = -39, size = 4)
     })
     
-    # Descriptions for variables
+    # Descriptions for indicators
     descriptions <- list(
       `Alcohol misuse` = "Age standardised alcohol-specific death rate per 100,000.",
       `Breast Cancer Screening` = "Percentage of eligible women screened for breast cancer.",
@@ -97,8 +98,8 @@ barchartServer <- function(id) {
     
     # Render the description modal on button click
     observeEvent(input$help, {
-      # Retrieve description based on selected variable
-      description_text <- descriptions[[input$variable]]
+      # Retrieve description based on selected indicator
+      description_text <- descriptions[[input$indicator]]
       showModal(modalDialog(
         title = "Help",
         easyClose = TRUE,
@@ -106,10 +107,10 @@ barchartServer <- function(id) {
         HTML(paste0("
           <ul>
             <li>This chart displays health index scores for various local authorities in Wales. </li>
-            <li>Use the dropdown menu to select a variable to highlight its position on the plot. The chart will update accordingly to show the selected variable's scores.</li>
+            <li>Use the dropdown menu to select a indicator to highlight its position on the plot. The chart will update accordingly to show the selected indicator's scores.</li>
             <li>Health index scores are calculated by adding the z scores for healthy lives indicators for each LTLA.</li>
             <li>For more information on how the score was created, see the health index methods button at the top of the page.</li>
-            <li><strong>Description for ", input$variable, ":</strong> ", description_text, "</li>
+            <li><strong>Description for ", input$indicator, ":</strong> ", description_text, "</li>
           </ul>
         "))
       ))
