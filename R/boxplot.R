@@ -6,7 +6,13 @@ boxplotUI <- function(id) {
                 choices = NULL,  # Choices will be populated in server function
                 selected = NULL),
     actionButton(ns("help_button"), "Help"),
-    plotlyOutput(ns("boxplot"), height = "600px")
+    plotlyOutput(ns("boxplot"), height = "600px"),
+    shinyjs::useShinyjs(),  # Ensure shinyjs is included
+    actionLink(ns("toggle_method_info"), "How to read the boxplots ↓"),
+    div(id = ns("method_info"), style = "display: none;",  # Ensure it's hidden by default
+        p("The diagram below displays how to read the subdomains boxplots."),
+        tags$img(src = "boxplot.png", alt = "Boxplot Diagram", style = "max-width: 100%; height: auto;")  # Add your image here
+    )
   )
 }
 # Server function for boxplot module
@@ -88,21 +94,25 @@ boxplotServer <- function(id) {
         footer = NULL,
         HTML("
             <ul>
-        <li>This chart shows health scores for different categories (behavioural risk factors, children and young people, physiological risk factors, and protective measures) across various areas in Wales. The dotted line across the middle of the boxplot is the Welsh Average. </li>
+        <li>This chart shows subdomain scores for each area for each subdomain under Healthy Lives. The dotted line across the middle of the boxplot is the Welsh Average score. </li>
         <li>Select an area from the dropdown menu to highlight its scores on the plot.</li>
         <li>The chart will update to show how the selected area compares to others.</li>
-        <li>A box plot helps us understand how scores are spread out. Here's how it works:</li>
-        <li>
-          <ul>
-            <li>The box in the plot shows where most of the scores fall. The line inside the box marks the middle score.</li>
-            <li>Lines extending from the box show the range of scores, from the lowest to the highest, except for a few extreme values.</li>
-            <li>Points outside these lines are considered unusual and are shown separately. These are called outliers </li>
-          </ul>
-        </li>
-        <li>For more details on how these scores are calculated, check the health index methods button at the top of the page.</li>
+        <li>See drop down menu below for how to read the boxplot </li>
+        <li>For more details on how scores are calculated, please refer to Methodology tab.</li>
       </ul>
     ")
       ))
+    })
+    # Toggle visibility of the method info section
+    observeEvent(input$toggle_method_info, {
+      toggle(id = "method_info", anim = TRUE)
+      
+      # Change the arrow direction
+      if (isTRUE(input$toggle_method_info %% 2 == 1)) {
+        updateActionLink(session, "toggle_method_info", label = "How to read the boxplots ↑")
+      } else {
+        updateActionLink(session, "toggle_method_info", label = "How to read the boxplots ↓")
+      }
     })
   })
 }

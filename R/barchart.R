@@ -53,7 +53,7 @@ barchartServer <- function(id) {
       
       # Create the bar chart with ggplot2
       ggplot(hl_composite_score, aes(x = .data[["ltla21_name"]], y = .data[[input$indicator]])) +
-        geom_bar(stat = "identity", fill = "steelblue", color = "black") +
+        geom_bar(stat = "identity", fill = "lightblue", color = "black") +
         theme_minimal() +
         labs(title = "Health score barchart by indicator", 
              x = "Area", 
@@ -106,11 +106,10 @@ barchartServer <- function(id) {
         footer = NULL,
         HTML(paste0("
           <ul>
-            <li>This chart displays health index scores for various local authorities in Wales. </li>
-            <li>Use the dropdown menu to select a indicator to highlight its position on the plot. The chart will update accordingly to show the selected indicator's scores.</li>
-            <li>Health index scores are calculated by adding the z scores for healthy lives indicators for each LTLA.</li>
-            <li>For more information on how the score was created, see the health index methods button at the top of the page.</li>
-            <li><strong>Description for ", input$indicator, ":</strong> ", description_text, "</li>
+            <li>This chart displays indicator scores for each area.</li>
+            <li>Use the dropdown menu to select an indicator. The chart will update to show the scores for each area for that indicator.</li>
+            <li>For more details on how scores are calculated, please refer to Methodology tab.</li>
+            <li>For information on what each indicator is measuring, please refer to metadata.</li>
           </ul>
         "))
       ))

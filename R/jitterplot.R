@@ -3,6 +3,7 @@ compJitterUI <- function(id) {
   ns <- NS(id)
   tagList(
     selectInput(ns("ltla_select"), "Select area:", choices = NULL),
+    actionButton(ns("help_button"), "Help"),
     plotlyOutput(ns("compJitter")),
     br()  # Adds a line break
   )
@@ -95,6 +96,23 @@ compJitterServer <- function(id) {
             )
           )
         )
+    })
+    
+    # Render the Help Button
+    observeEvent(input$help_button, {
+      showModal(modalDialog(
+        title = "Help",
+        easyClose = TRUE,
+        footer = NULL,
+        HTML("
+      <ul>
+        <li>This chart displays healthy lives scores areas in Wales. The dotted line down the centre shows the Welsh average score</li>
+        <li>Use the dropdown menu to select an area to highlight its position on the plot.</li>
+        <li>Hover over points on the plot to see their healthy lives scores.</li>
+        <li>For more information on how the score was created, please refer to the methodology tab.</li>
+      </ul>
+    ")
+      ))
     })
   })
 }
