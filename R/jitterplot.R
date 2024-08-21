@@ -126,10 +126,10 @@ compJitterServer <- function(id) {
         footer = NULL,
         HTML("
       <ul>
-        <li>This chart displays health index scores for various local authorities in Wales.</li>
-        <li>Use the dropdown menu to select a local authority to highlight its position on the plot. The chart will update accordingly to show the selected area's scores.</li>
-        <li>Health index scores are calculated by adding the z scores for healthy lives indicators for each LTLA.</li>
-        <li>For more information on how the score was created, see the health index methods button at the top of the page.</li>
+        <li>This chart displays healthy lives scores areas in Wales. The dotted line down the centre shows the Welsh average score</li>
+        <li>Use the dropdown menu to select an area to highlight its position on the plot.</li>
+        <li>Hover over points on the plot to see their healthy lives scores.</li>
+        <li>For more information on how the score was created, please refer to the methodology tab.</li>
       </ul>
     ")
       ))

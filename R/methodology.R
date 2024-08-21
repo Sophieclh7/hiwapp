@@ -9,7 +9,7 @@ methodologyUI <- function(id) {
         <dt style='font-size: 20px; margin-top: 30px; margin-bottom: 10px;'><strong>Step 1: Data collection</strong></dt>
         <dd style='margin-bottom: 30px;'>
           See metadata for data sources for each indicator: 
-          <a href='https://github.com/Sophieclh7/health-index-wales/blob/main/metadata.md' target='_blank'>Metadata</a>
+          <a href='https://github.com/humaniverse/health-index-wales/blob/main/metadata.md' target='_blank'>Metadata</a>
           <br>Data was collected for each indicator in the form of rates or percentages, age standardised where available.
         </dd>
         

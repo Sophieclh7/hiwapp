@@ -8,11 +8,14 @@ ui <- fluidPage(
         h1("Welcome to the Health Inequalities Explorer Wales", 
            style = "text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px;"),
         h2("Overview", style = "font-size: 20px;"),
-        p("This application allows users to explore and compare health data across different local authorities in Wales. Navigate through the tabs to view indicator and subdomain scores. This app uses the data from the 'Healthy Lives' domain of the Health Index. 'Healthy Lives' consists of 'Behavioural Risk Factors', 'Children and Young People', 'Physiological Risk Factors', and 'Protective Measures'. These subdomains contain their own respective indicators."  ),
-        p("For detailed explanations, methods used, and additional information, please refer to the metadata available at ", 
-          a("this link", href = "https://github.com/humaniverse/health-index-wales/blob/main/metadata.md")),
+        p("This application allows users to explore and compare health data across different local authority areas in Wales. This app uses the data from the 'Healthy Lives' domain of the Health Index Wales. 'Healthy Lives' consists of the subdomains 'Behavioural Risk Factors', 'Children and Young People', 'Physiological Risk Factors', and 'Protective Measures'. These subdomains each contain a group of health indicators."),
+        p(" Navigate through the tabs to view the healthy lives score, scores for each subdomain and scores for each indicator."),
+       
         img(src = "Flow_chart.png", height = "500px", style = "display: block; margin-left: auto; margin-right: auto;"),
-        p("The chart above shows how the Health Index Wales is broken down into Domains, which are then broken down into Subdomains, which are then broken down into Indicators.", style = "text-align: center;")
+        p("The chart above shows how the Health Index Wales consists of Domains - this app only includes data for the Healthy Lives domain. The domains consist of subdomains, which each consist of a group of indicators."),
+        p("For information on what each indicator is measuring, please refer to the metadata: ", 
+          a("Metadata", href = "https://github.com/humaniverse/health-index-wales/blob/main/metadata.md"),
+          p("For information on how scores were created, please refer to the methodology tab"))
       ),
       tabPanel(
         "Healthy Lives Score",
