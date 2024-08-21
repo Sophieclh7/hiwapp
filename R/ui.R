@@ -11,7 +11,8 @@ ui <- fluidPage(
         p("This application allows users to explore and compare health data across different local authorities in Wales. Navigate through the tabs to view indicator and subdomain scores. This app uses the data from the 'Healthy Lives' domain of the Health Index. 'Healthy Lives' consists of 'Behavioural Risk Factors', 'Children and Young People', 'Physiological Risk Factors', and 'Protective Measures'. These subdomains contain their own respective indicators."  ),
         p("For detailed explanations and methods used, please refer to the glossary tab."),
         img(src = "Flow_chart.png", height = "500px", style = "display: block; margin-left: auto; margin-right: auto;"),
-        p("The chart above shows how the Health Index Wales is broken down into Domains, which are then broken down into Subdomains, which are then broken down into Indicators.", style = "text-align: center;")
+        p("The chart above shows how the Health Index Wales consists of Domains, of which this app uses Healthy Lives. Healthy Lives consists of Subdomains, which each consist of a group of indicators. For information about what each indicator is measuring, please see Metadata:", 
+          a("Metadata", href = "https://github.com/Sophieclh7/health-index-wales/blob/main/metadata.md"))
       ),
       tabPanel(
         "Health Index Score",
