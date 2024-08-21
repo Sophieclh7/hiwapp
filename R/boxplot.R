@@ -1,20 +1,19 @@
 #UI function for the boxplot module
 boxplotUI <- function(id) {
   ns <- NS(id)
-  tagList(
-    selectInput(ns("selected_ltla"), "Select area:",
-                choices = NULL,  # Choices will be populated in server function
-                selected = NULL),
-    actionButton(ns("help_button"), "Help"),
-    plotlyOutput(ns("boxplot"), height = "600px"),
-    shinyjs::useShinyjs(),  # Ensure shinyjs is included
-    actionLink(ns("toggle_method_info"), "How to read the boxplots ↓"),
-    div(id = ns("method_info"), style = "display: none;",  # Ensure it's hidden by default
+  tagList( # List of items to display on page
+    selectInput(ns("selected_ltla"), "Select area:", choices = NULL),  # Adds dropdown, choices empty as are added in server function
+    actionButton(ns("help_button"), "Help"), # Adds help button
+    plotlyOutput(ns("boxplot"), height = "600px"), # Adds boxplot
+    shinyjs::useShinyjs(),  # Ensure shinyjs is included, needed to create the dropdown menu
+    actionLink(ns("toggle_method_info"), "How to read the boxplots ↓"), # Create dropdown for boxplot diagram
+    div(id = ns("method_info"), style = "display: none;",  # Ensure dropdown is hidden by default
         p("The diagram below displays how to read the subdomains boxplots."),
-        tags$img(src = "boxplot.png", alt = "Boxplot Diagram", style = "max-width: 100%; height: auto;")  # Add your image here
+        tags$img(src = "boxplot.png", style = "max-width: 100%")  # Adds boxplo diagram
     )
   )
 }
+
 # Server function for boxplot module
 boxplotServer <- function(id) {
   moduleServer(id, function(input, output, session) {
