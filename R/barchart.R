@@ -4,6 +4,10 @@ barchartUI <- function(id) {
   
   # Define the UI elements
   tagList(
+    
+    # Button to show the help modal
+    actionButton(ns("help"), label = "Help"),
+    
     # Dropdown menu to select the indicator
     selectInput(ns("indicator"), 
                 label = "Select indicator", 
@@ -34,10 +38,7 @@ barchartUI <- function(id) {
                 selected = "Adult overweight obese"), # Sets as default
     
     # Plot output for the bar chart
-    plotOutput(ns("barchart")),
-    
-    # Button to show the help modal
-    actionButton(ns("help"), label = "Help")
+    plotOutput(ns("barchart"))
   )
 }
 

@@ -1,96 +1,86 @@
-# UI function for the compJitter module
+# ---- UI function ----
 compJitterUI <- function(id) {
   ns <- NS(id)
-  tagList(
-    selectInput(ns("ltla_select"), "Select area:", choices = NULL),
-    actionButton(ns("help_button"), "Help"),
-    plotlyOutput(ns("compJitter")),
-    br()  # Adds a line break
+  tagList( # List of items to display on page
+    actionButton(ns("help_button"), "Help"), # Adds help button
+    selectInput(ns("ltla_select"), "Select area:", choices = NULL), # Adds dropdown menu
+    plotlyOutput(ns("compJitter")) # Adds jitterplot
   )
 }
 
-# Server function for compJitter module
+# ---- Server function ----
 compJitterServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     
     # Load data
-    hl_data <- get(load("data/hl_composite_score.rda"))
+    load("data/hl_composite_score.rda") 
     
-    # Check if 'Composite score' column exists
-    if (!"Composite score" %in% colnames(hl_data)) {
-      stop("The column 'Composite score' does not exist in the data.")
-    }
+    # Update the UI dropdown with the ltla choices
+    updateSelectInput(session, "ltla_select", choices = hl_composite_score$ltla21_name)
     
-    # Update ltla dropdown choices
-    updateSelectInput(session, "ltla_select", choices = hl_data$ltla21_name)
+    # Ensure the same set of random y points will be produced each time app is run
+    set.seed(123)
+    
+    # Add random y-axis values for each point - typical feature of jitterplot to ensure points don't overlap
+    hl_composite_score$random_y <- runif(nrow(hl_composite_score), min = -1, max = 1) # Sets height limit for points
     
     output$compJitter <- renderPlotly({
       
-      # Add a random y-axis value for each point
-      set.seed(123)  # for reproducibility
-      hl_data$random_y <- runif(nrow(hl_data), min = -1, max = 1)
-      
-      # Define the new range for x-axis
-      x_min <- 85
+      # Set the range for the x-axis
+      x_min <- 85 
       x_max <- 115
       
-      # Define points for vertical grid lines in the new range
-      additional_lines <- seq(85, 115, by = 5)
-      labels <- as.character(additional_lines)
+      # Create labels for intervals of 5 along the x axis, with the 100 label saying "Welsh Average"
+      x_labels <- as.character(seq(x_min, x_max, by = 5))
+      x_labels[x_labels == "100"] <- "100\nWelsh Average"
       
-      # Add custom x-axis labels including "Welsh Average"
-      x_labels <- labels
-      x_labels[which(labels == "100")] <- "100\nWelsh Average"
-      
-      # Highlight the selected LTLA
-      hl_data$highlight <- ifelse(hl_data$ltla21_name == input$ltla_select, "Selected", "Not Selected")
+      # Highlight the selected ltla
+      hl_composite_score$highlight <- ifelse(hl_composite_score$ltla21_name == input$ltla_select, "Selected", "Not Selected")
       
       # Create the jitterplot
-      p <- ggplot(hl_data, aes(x = `Composite score`, y = random_y, color = highlight, 
-                               text = paste("Area Name:", ltla21_name, "<br>Healthy Lives Score:", round(`Composite score`)))) +
-        geom_jitter(width = 0.2, height = 0, size = 3) +
-        geom_hline(yintercept = 0, color = "grey", linewidth = 0.3) +
-        geom_vline(xintercept = additional_lines, color = "grey", linewidth = 0.3) +
-        geom_vline(xintercept = 100, colour = "black", linewidth = 0.7, linetype = "dashed") +  # Dashed line at x = 100
+      p <- ggplot(hl_composite_score, aes(x = `Composite score`, y = random_y, color = highlight, # Sets healthy lives score on x axis and random positions along y axis
+                                          text = paste("Area Name:", ltla21_name, "<br>Healthy Lives Score:", round(`Composite score`)))) + # Displays Area name and Healthy Lives Scores when hover over the points
+        geom_jitter(size = 3) + # Specify size of points
+        geom_hline(yintercept = 0, color = "grey", linewidth = 0.3) + #Adds horizontal line at y = 0
+        geom_vline(xintercept = seq(x_min, x_max, by = 5), color = "grey", linewidth = 0.3) + # Adds vertical lines at every interval of 5 along the x axis
+        geom_vline(xintercept = 100, colour = "black", linewidth = 0.7, linetype = "dashed") +  # Adds dashed vertical line at x = 100
         scale_x_continuous(
           limits = c(x_min, x_max),
-          breaks = additional_lines,
+          breaks = seq(x_min, x_max, by = 5),
           labels = x_labels
         ) +
-        scale_color_manual(values = c("Selected" = "blue", "Not Selected" = "orange")) +
+        scale_color_manual(values = c("Selected" = "blue", "Not Selected" = "orange")) + # Highlight selected ltla blue and not selected ltlas orange
         labs(
-          x = "Healthy Lives Score",
-          y = "Areas",
-          title = "Healthy Lives Jitterplot"
+          x = "Healthy Lives Score", # Adds x axis label
+          y = "Areas", # Adds y axis label
+          title = "Healthy Lives Jitterplot" # Adds title
         ) +
         theme_minimal() +
-        theme(axis.text.y = element_blank(), # Hides major grid lines and text
+        theme(axis.text.y = element_blank(), # Hides y axis labels
               axis.ticks.y = element_blank(),
-              panel.grid.major.y = element_blank(), 
+              panel.grid.major.y = element_blank(), # Hides unwanted gridlines
               panel.grid.minor.y = element_blank(),
               panel.grid.major.x = element_blank(),
               panel.grid.minor.x = element_blank()) +
         coord_fixed(ratio = 3)  # Adjust ratio of x to y units, to make plot less tall
       
-      # Convert to Plotly
-      ggplotly(p, tooltip = "text") %>%
+      # Convert to Plotly object
+      ggplotly(p, tooltip = "text") |> # Converts ggplot object p to Plotly object, tooltip text specifies that the tooltip will display text when hovering over points
         layout(
-          annotations = list(
+          annotations = list( #Add the worse/better than average labels to the plot
             list(
-              x = 105, 
-              y = 0.9,  # Adjusted y value to bring the label closer to the plot
+              x = 105, # Label to the right of the average dotted line
+              y = 0.9,  # High y coordinate so label appears at top of plot
               text = "Better Than Average", 
-              showarrow = FALSE, 
-              xref = "x", 
-              yref = "paper",
-              font = list(size = 12)
+              showarrow = FALSE, # Gets rid of arrows
+              yref = "paper", # Sets y coordinate height of label to be relative to plotly object, rather than ggplot height
+              font = list(size = 12) # Sets font size to 12
             ),
-            list(
-              x = 95, 
-              y = 0.9,  # Adjusted y value to bring the label closer to the plot
+            list( # As above
+              x = 95, # Label to the left of the average dotted line
+              y = 0.9,  
               text = "Worse Than Average", 
               showarrow = FALSE, 
-              xref = "x", 
               yref = "paper",
               font = list(size = 12)
             )
@@ -99,10 +89,10 @@ compJitterServer <- function(id) {
     })
     
     # Render the Help Button
-    observeEvent(input$help_button, {
-      showModal(modalDialog(
+    observeEvent(input$help_button, { # Observes for when help button clicked
+      showModal(modalDialog( # Displays help box on screen
         title = "Help",
-        easyClose = TRUE,
+        easyClose = TRUE, # Allows user to close help button by clicking elsewhere on screen
         footer = NULL,
         HTML("
       <ul>
