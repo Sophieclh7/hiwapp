@@ -1,10 +1,9 @@
-# ---- User Interface ----
-# ---- User Interface ----
+# ---- UI function ----
 compositechartUI <- function(id) {
-  ns <- NS(id)
+  ns <- NS(id) # Namespace ensures unique input and output IDs
   
   tagList(
-    tags$h2("Subdomain Score Chart"),
+    tags$h2("Subdomain Score Chart"), # Main header for the UI
     
     # ---- Drop Down Menu ----
     selectInput(
@@ -18,7 +17,7 @@ compositechartUI <- function(id) {
                   "Rhondda Cynon Taf", "Caerphilly", "Blaenau Gwent",
                   "Torfaen", "Monmouthshire", "Newport",
                   "Powys", "Merthyr Tydfil"),
-      selected = "Isle of Anglesey"  # Set default value here
+      selected = "Isle of Anglesey" # Sets Isle of Anglesey as default
     ),
     
     # Output for comparison table
@@ -28,25 +27,12 @@ compositechartUI <- function(id) {
     textOutput(ns("description"))
   )
 }
-    # ---- Server Function ----
+# ---- Server Function ----
 compositechartServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     # Load the data from the data directory
     load("data/hl_composite_score.rda")
     
-    # Ensure hl_composite_score is loaded and available
-    req(exists("hl_composite_score"), "Data frame 'hl_composite_score' not found. Please check your data loading.")
-    
-    # Verify column names to ensure correct column names are used
-    req(
-      all(c("ltla21_name", 
-            "ltla21_code",
-            "Behavioural risk score", 
-            "Children & young people score", 
-            "Physiological risk factors score", 
-            "Protective measures score") %in% colnames(hl_composite_score)),
-      "One or more required columns are missing from the data frame."
-    )
     
     output$comparisonTable <- renderTable({
       # Create the Welsh average row
@@ -59,18 +45,18 @@ compositechartServer <- function(id) {
       )
       
       # Filter data based on the selected LTLA
-      data_to_display <- hl_composite_score %>%
-        filter(ltla21_name == input$LTLA | input$LTLA == "") %>%
+      data_to_display <- hl_composite_score |>
+        filter(ltla21_name == input$LTLA | input$LTLA == "") |>
         select(
           ltla21_name,
           `Behavioural risk score`,
           `Children & young people score`,
           `Physiological risk factors score`,
           `Protective measures score`
-        ) %>%
+        ) |>
         rename("Area name" = ltla21_name)
       
-      # Bind the Welsh average row to the top of the table
+      # Binds Welsh average score to table as a row for comparison
       data_to_display <- bind_rows(welsh_average_row, data_to_display)
       
       data_to_display
