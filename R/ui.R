@@ -14,7 +14,10 @@ ui <- fluidPage(
         p("The chart above shows how the Health Index Wales consists of Domains - this app only includes data for the Healthy Lives domain. The domains consist of subdomains, which each consist of a group of indicators."),
         p("For information on what each indicator is measuring, please refer to the metadata: ", 
           a("Metadata", href = "https://github.com/humaniverse/health-index-wales/blob/main/metadata.md"),
-          p("For information on how scores were created, please refer to the methodology tab"))
+          p("For information on how scores were created, please refer to the methodology tab"),
+          br(),
+          p("This is a prototype app and all data needs to be verified."),
+          p("This app was created by Sophie Hammond and Zara-Morgan Oluwole as part of their Data Science Internships at the British Red Cross."))
       ),
       tabPanel(
         "Healthy Lives Score",
