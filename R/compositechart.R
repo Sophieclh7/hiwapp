@@ -5,7 +5,7 @@ compositechartUI <- function(id) {
   tagList(
     tags$h2("Subdomain Score Chart"), # Main header for the UI
     
-    # ---- Drop Down Menu ----
+    # Drop Down Menu to select ltla
     selectInput(
       ns("LTLA"), 
       label = "Select area:",
@@ -27,14 +27,16 @@ compositechartUI <- function(id) {
     textOutput(ns("description"))
   )
 }
+
 # ---- Server Function ----
 compositechartServer <- function(id) {
   moduleServer(id, function(input, output, session) {
-    # Load the data from the data directory
+    
+    # Load data 
     load("data/hl_composite_score.rda")
     
-    
     output$comparisonTable <- renderTable({
+      
       # Create the Welsh average row
       welsh_average_row <- tibble::tibble(
         `Area name` = "Welsh average",
@@ -53,12 +55,11 @@ compositechartServer <- function(id) {
           `Children & young people score`,
           `Physiological risk factors score`,
           `Protective measures score`
-        ) |>
+        ) |> # Display subdomain score for ltla selected
         rename("Area name" = ltla21_name)
       
       # Binds Welsh average score to table as a row for comparison
       data_to_display <- bind_rows(welsh_average_row, data_to_display)
-      
       data_to_display
     })
     

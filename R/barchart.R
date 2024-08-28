@@ -42,17 +42,20 @@ barchartUI <- function(id) {
   )
 }
 
+# ---- Server function ----
 barchartServer <- function(id) {
   moduleServer(id, function(input, output, session) {
-    # Load the data
+    
+    # Load data
     load("data/hl_composite_score.rda")
     
-    # Render the bar chart
+    # Render bar chart
     output$barchart <- renderPlot({
-      # Calculate the mean of the selected indicator
+      
+      # Calculate mean of selected indicator
       mean_value <- mean(hl_composite_score[[input$indicator]])
       
-      # Create the bar chart with ggplot2
+      # Create bar chart
       ggplot(hl_composite_score, aes(x = .data[["ltla21_name"]], y = .data[[input$indicator]])) +
         geom_bar(stat = "identity", fill = "lightblue", color = "black") +
         theme_minimal() +
@@ -74,7 +77,8 @@ barchartServer <- function(id) {
         annotate("text", x = -Inf, y = mean_value, label = "Better than mean", hjust = -0.2, vjust = -39, size = 4) +
         annotate("text", x = -Inf, y = mean_value, label = "Worse than mean", hjust = 1.1, vjust = -39, size = 4)
     })
-    # Render the description modal on button click
+    
+    # Render the help button
     observeEvent(input$help, {
       # Retrieve description based on selected indicator
       showModal(modalDialog(

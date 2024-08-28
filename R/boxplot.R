@@ -1,10 +1,20 @@
 # ---- UI function ----
 boxplotUI <- function(id) {
-  ns <- NS(id)
+  ns <- NS(id) # Namespace ensures unique input and output IDs
+  
+  # Define the UI elements
   tagList(
+    
+    # Button to show the help modal
     actionButton(ns("help_button"), "Help"), # Help button
+    
+    #Dropdown menu to select ltla
     selectInput(ns("selected_ltla"), "Select area:", choices = NULL),  # Dropdown, choices added in server
+    
+    #Add boxplot
     plotlyOutput(ns("boxplot"), height = "600px"), # Boxplot
+    
+    #Add how to read boxplots dropdown
     shinyjs::useShinyjs(),  # Include shinyjs
     actionLink(ns("toggle_method_info"), "How to read the boxplots ↓"), # Dropdown for boxplot diagram
     div(id = ns("method_info"), style = "display: none;",  # Hidden dropdown
