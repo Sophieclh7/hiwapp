@@ -61,7 +61,7 @@ barchartServer <- function(id) {
         labs(title = "Indicator Scores by Area", 
              x = "Area", 
              y = input$indicator) +
-        theme(axis.text = element_text(size = 12), 
+        theme(axis.text = element_text(size = 8), 
               axis.title = element_text(size = 14), 
               plot.title = element_text(size = 16, face = "bold")) +
         coord_flip() +
@@ -78,18 +78,18 @@ barchartServer <- function(id) {
           annotations = list(
             # "Better than Average" annotation
             list(
-              x = 0.95, # Position it right of the dashed line
-              y = 110,  # Height relative to the plot
+              x = 0.92, # Position to the right of the plot
+              y = 1.07,  # Position at the top
               text = "Better Than Average", 
               showarrow = FALSE, # No arrow
-              xref = "paper", # Position relative to the plot
+              xref = "paper", # Relative to the whole plot
               yref = "paper", 
               font = list(size = 12)
             ),
             # "Worse than Average" annotation
             list(
-              x = 0.95, # Position it left of the dashed line
-              y = 90,  
+              x = 0.65, # Position to the left of the plot
+              y = 1.07,  
               text = "Worse Than Average", 
               showarrow = FALSE, 
               xref = "paper",
