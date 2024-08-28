@@ -38,25 +38,24 @@ barchartUI <- function(id) {
                 selected = "Adult overweight obese"), # Sets as default
     
     # Plot output for the bar chart
-    plotOutput(ns("barchart"))
+    plotlyOutput(ns("barchart"))
   )
 }
 
 # ---- Server function ----
+# ---- Server function ----
 barchartServer <- function(id) {
   moduleServer(id, function(input, output, session) {
-    
-    # Load data
+    # Load the data
     load("data/hl_composite_score.rda")
     
-    # Render bar chart
-    output$barchart <- renderPlot({
-      
-      # Calculate mean of selected indicator
+    # Render the bar chart as a plotly object
+    output$barchart <- renderPlotly({
+      # Calculate the mean of the selected indicator
       mean_value <- mean(hl_composite_score[[input$indicator]])
       
-      # Create bar chart
-      ggplot(hl_composite_score, aes(x = .data[["ltla21_name"]], y = .data[[input$indicator]])) +
+      # Create the bar chart with ggplot2
+      p <- ggplot(hl_composite_score, aes(x = .data[["ltla21_name"]], y = .data[[input$indicator]])) +
         geom_bar(stat = "identity", fill = "lightblue", color = "black") +
         theme_minimal() +
         labs(title = "Indicator Scores by Area", 
@@ -68,17 +67,41 @@ barchartServer <- function(id) {
         coord_flip() +
         scale_y_continuous(limits = c(0, 130), breaks = seq(0, 130, by = 10),
                            labels = function(x) {
-                             # Replaces y = 100 with custom text - 100/nWelsh Average
+                             # Replaces y = 100 with custom text - 100\nWelsh Average
                              ifelse(x == 100, "100\nWelsh Average", as.character(x))
                            }) + 
-        geom_hline(yintercept = 100, linetype = "dashed", size = 1.5) +  # Thicker dashed line at y = 100
-        
-        # Add annotations for "Worse than mean" and "Better than mean"
-        annotate("text", x = -Inf, y = mean_value, label = "Better than mean", hjust = -0.2, vjust = -39, size = 4) +
-        annotate("text", x = -Inf, y = mean_value, label = "Worse than mean", hjust = 1.1, vjust = -39, size = 4)
+        geom_hline(yintercept = 100, linetype = "dashed", linewidth = 1.5) # Thicker dashed line at y = 100
+      
+      # Convert ggplot to plotly object for interactivity
+      ggplotly(p, tooltip = "text") %>%
+        layout(
+          annotations = list(
+            # "Better than Average" annotation
+            list(
+              x = 0.95, # Position it right of the dashed line
+              y = 110,  # Height relative to the plot
+              text = "Better Than Average", 
+              showarrow = FALSE, # No arrow
+              xref = "paper", # Position relative to the plot
+              yref = "paper", 
+              font = list(size = 12)
+            ),
+            # "Worse than Average" annotation
+            list(
+              x = 0.95, # Position it left of the dashed line
+              y = 90,  
+              text = "Worse Than Average", 
+              showarrow = FALSE, 
+              xref = "paper",
+              yref = "paper",
+              font = list(size = 12)
+            )
+          )
+        ) %>% 
+        config(toImageButtonOptions = list(format = "png"))
     })
     
-    # Render the help button
+    # Render the description modal on button click
     observeEvent(input$help, {
       # Retrieve description based on selected indicator
       showModal(modalDialog(
