@@ -1,10 +1,20 @@
 # ---- UI function ----
 boxplotUI <- function(id) {
-  ns <- NS(id)
+  ns <- NS(id) # Namespace ensures unique input and output IDs
+  
+  # Define the UI elements
   tagList(
+    
+    # Button to show the help modal
     actionButton(ns("help_button"), "Help"), # Help button
+    
+    #Dropdown menu to select ltla
     selectInput(ns("selected_ltla"), "Select area:", choices = NULL),  # Dropdown, choices added in server
+    
+    #Add boxplot
     plotlyOutput(ns("boxplot"), height = "600px"), # Boxplot
+    
+    #Add how to read boxplots dropdown
     shinyjs::useShinyjs(),  # Include shinyjs
     actionLink(ns("toggle_method_info"), "How to read the boxplots ↓"), # Dropdown for boxplot diagram
     div(id = ns("method_info"), style = "display: none;",  # Hidden dropdown
@@ -90,6 +100,7 @@ boxplotServer <- function(id) {
               <li>This chart shows subdomain scores for each area for each subdomain under Healthy Lives. The dotted line across the middle of the boxplot is the Welsh Average score. </li>
               <li>Select an area from the dropdown menu to highlight its scores on the plot.</li>
               <li>The chart will update to show how the selected area compares to others.</li>
+              <li>Hover over the points to view their subdomain score.</li>
               <li>See drop down menu below for how to read the boxplot </li>
               <li>For more details on how scores are calculated, please refer to Methodology tab.</li>
             </ul>

@@ -1,10 +1,18 @@
 # ---- UI function ----
 compJitterUI <- function(id) {
-  ns <- NS(id)
-  tagList( # List of items to display on page
+  ns <- NS(id) # Namespace ensures unique input and output IDs
+  
+  # Define the UI elements
+  tagList( 
+    
+    # Button to show the help modal
     actionButton(ns("help_button"), "Help"), # Adds help button
-    selectInput(ns("ltla_select"), "Select area:", choices = NULL), # Adds dropdown menu
-    plotlyOutput(ns("compJitter")) # Adds jitterplot
+    
+    # Dropdown menu to select ltla
+    selectInput(ns("ltla_select"), "Select area:", choices = NULL), 
+    
+    # Add jitterplot
+    plotlyOutput(ns("compJitter")) 
   )
 }
 
