@@ -2,8 +2,14 @@
 compositechartUI <- function(id) {
   ns <- NS(id) # Namespace ensures unique input and output IDs
   
+  # Define the UI elements
   tagList(
-    tags$h2("Subdomain Score Chart"), # Main header for the UI
+    
+    # Main header for the UI
+    tags$h2("Subdomain Score Chart"), 
+    
+    # Button to show the help modal
+    actionButton(ns("help"), label = "Help"),
     
     # Drop Down Menu to select ltla
     selectInput(
@@ -47,15 +53,15 @@ compositechartServer <- function(id) {
       )
       
       # Filter data based on the selected LTLA
-      data_to_display <- hl_composite_score |>
-        filter(ltla21_name == input$LTLA | input$LTLA == "") |>
+      data_to_display <- hl_composite_score %>%
+        filter(ltla21_name == input$LTLA | input$LTLA == "") %>%
         select(
           ltla21_name,
           `Behavioural risk score`,
           `Children & young people score`,
           `Physiological risk factors score`,
           `Protective measures score`
-        ) |> # Display subdomain score for ltla selected
+        ) %>% # Display subdomain score for ltla selected
         rename("Area name" = ltla21_name)
       
       # Binds Welsh average score to table as a row for comparison
@@ -70,6 +76,22 @@ compositechartServer <- function(id) {
       } else {
         paste("This table shows the subdomain scores for", input$LTLA, "in Wales.")
       }
+    })
+    
+    # Render the Help Button
+    observeEvent(input$help, { # Observes for when help button clicked
+      showModal(modalDialog( # Displays help box on screen
+        title = "Help",
+        easyClose = TRUE, # Allows user to close help button by clicking elsewhere on screen
+        footer = NULL,
+        HTML("
+          <ul>
+            <li>This chart displays subdomain scores for areas in Wales compared to the Welsh average score.</li>
+            <li>Use the dropdown menu to select an area to display its subdomain scores</li>
+            <li>For more information on how the score was created, please refer to the methodology tab.</li>
+          </ul>
+        ")
+      ))
     })
   })
 }

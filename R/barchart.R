@@ -8,7 +8,7 @@ barchartUI <- function(id) {
     # Button to show the help modal
     actionButton(ns("help"), label = "Help"),
     
-    # Dropdown menu to select the indicator
+    # Dropdown menu to select the indcator
     selectInput(ns("indicator"), 
                 label = "Select indicator", 
                 choices = c("Adult overweight obese",
@@ -49,15 +49,46 @@ barchartServer <- function(id) {
     load("data/hl_composite_score.rda")
     load("data/hl_raw_data.rda")
     
+    # Create a mapping of indicators to their respective raw count descriptions
+    indicator_description <- list(
+      "6 in 1 vaccination" = "Percentage immunised with 6 in 1 vaccination by 2nd birthday",
+      "Adult overweight obese" = "Percentage adults overweight or obese",
+      "Alcohol misuse" = "Alcohol death rate per 100,000",
+      "Bowel Cancer Screening" = "Bowel Cancer screening uptake percentage",
+      "Breast Cancer Screening" = "Breast Cancer screening uptake percentage",
+      "Cervical Cancer Screening" = "Cervical Cancer screening uptake percentage",
+      "Drug misuse" = "Drug poisoning death rate per 1,000",
+      "Early years development" = "Percent pupils achieving expected level across four foundation phase tested areas",
+      "Education employment apprenticeship" = "Participation rate post 16 under 20 in education/employment/apprenticeship",
+      "Healthy eating" = "Percent adults who ate five fruit/veg the previous day",
+      "Literacy score" = "Average literacy GCSE score",
+      "Low birth weight" = "Percentage of live births under <2500g",
+      "MeningitisB vaccination" = "MeningitisB vaccination",
+      "MMR vaccination" = "Percentage immunised with MMR vaccination by 2nd birthday",
+      "Numeracy score" = "Average numeracy GCSE score",
+      "Physical activity" = "Percent adults active at least 150 minutes the previous week",
+      "Pneumococcal vaccination" = "Percentage immunised with pneumococcal vaccination by 2nd birthday",
+      "Primary absences" = "Percentage of primary school absences",
+      "Reception overweight obese" = "Percentage children aged 4-5 overweight or obese",
+      "Secondary absences" = "Percentage of secondary school absences",
+      "Sedentary behaviour" = "Percent adults active less than 30 minutes the previous week",
+      "Smoking" = "Percentage smokers",
+      "Teenage pregnancy" = "Percentage teenage pregnancies"
+    )
+    
     # Render the bar chart as a plotly object
     output$barchart <- renderPlotly({
       # Combine the datasets for easier access
       combined_data <- hl_composite_score |>
-        mutate(raw_count = hl_raw_data[[input$indicator]],
-               text = paste("Area:", ltla21_name,
-                            "<br>Composite Score:", .data[[input$indicator]],
-                            "<br>Raw Count:", raw_count),
-               adjusted_score = .data[[input$indicator]] - 100)  # Adjust the score to center around 100
+        mutate(
+          raw_count = round(hl_raw_data[[input$indicator]] ,2),  # Round the raw count
+          adjusted_score = round(.data[[input$indicator]] - 100),  # Adjust and round the score
+          text = paste(
+            "Area:", ltla21_name,
+            "<br>Indicator Score:", round(.data[[input$indicator]]),  # Round the composite score
+            "<br>", indicator_description[[input$indicator]], ":", raw_count  # Use rounded raw count
+          )
+        )
       
       # Create the bar chart with ggplot2
       p <- ggplot(combined_data, aes(x = ltla21_name, y = adjusted_score, text = text)) +
@@ -114,10 +145,11 @@ barchartServer <- function(id) {
           <ul>
             <li>This chart displays indicator scores for each area.</li>
             <li>Use the dropdown menu to select an indicator. The chart will update to show the scores for each area for that indicator.</li>
+            <li>Hover over the bars to see the area name, indicator score, and what the indicator is measuring.</li>
             <li>For more details on how scores are calculated, please refer to Methodology tab.</li>
             <li>For information on what each indicator is measuring, please refer to metadata.</li>
             <br>
-            <li>What each indicator measures:</li>
+            <b>What each indicator measures:</b>
             <li>6 in 1 vaccination = Percentage of children immunised with 6 in 1 vaccination (Diptheria, Tetanus, Polio, Whooping Cough etc) by their second birthday</li>
             <li>Adult Overweight Obese = Percentage of overweight and obese adults (16+) in Wales</li>
             <li>Alcohol misuse = Age standardised alcohol-specific death rate per 100,000</li>
