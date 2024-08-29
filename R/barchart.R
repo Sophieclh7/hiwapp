@@ -43,19 +43,23 @@ barchartUI <- function(id) {
 }
 
 # ---- Server function ----
-# ---- Server function ----
 barchartServer <- function(id) {
   moduleServer(id, function(input, output, session) {
-    # Load the data
+    # Load the datasets
     load("data/hl_composite_score.rda")
+    load("data/hl_raw_data.rda")
     
     # Render the bar chart as a plotly object
     output$barchart <- renderPlotly({
-      # Calculate the mean of the selected indicator
-      mean_value <- mean(hl_composite_score[[input$indicator]])
+      # Combine the datasets for easier access
+      combined_data <- hl_composite_score %>%
+        mutate(raw_count = hl_raw_data[[input$indicator]],
+               text = paste("Area:", ltla21_name,
+                            "<br>Composite Score:", .data[[input$indicator]],
+                            "<br>Raw Count:", raw_count))
       
       # Create the bar chart with ggplot2
-      p <- ggplot(hl_composite_score, aes(x = .data[["ltla21_name"]], y = .data[[input$indicator]])) +
+      p <- ggplot(combined_data, aes(x = ltla21_name, y = .data[[input$indicator]], text = text)) +
         geom_bar(stat = "identity", fill = "lightblue", color = "black") +
         theme_minimal() +
         labs(title = "Indicator Scores by Area", 
@@ -67,28 +71,25 @@ barchartServer <- function(id) {
         coord_flip() +
         scale_y_continuous(limits = c(0, 130), breaks = seq(0, 130, by = 10),
                            labels = function(x) {
-                             # Replaces y = 100 with custom text - 100\nWelsh Average
                              ifelse(x == 100, "100\nWelsh Average", as.character(x))
                            }) + 
-        geom_hline(yintercept = 100, linetype = "dashed", linewidth = 1.5) # Thicker dashed line at y = 100
+        geom_hline(yintercept = 100, linetype = "dashed", linewidth = 1.5)
       
       # Convert ggplot to plotly object for interactivity
-      ggplotly(p, tooltip = "text") %>%
+      ggplotly(p, tooltip = "text") |>
         layout(
           annotations = list(
-            # "Better than Average" annotation
             list(
-              x = 0.92, # Position to the right of the plot
-              y = 1.07,  # Position at the top
+              x = 0.92, 
+              y = 1.07,  
               text = "Better Than Average", 
-              showarrow = FALSE, # No arrow
-              xref = "paper", # Relative to the whole plot
+              showarrow = FALSE, 
+              xref = "paper", 
               yref = "paper", 
               font = list(size = 12)
             ),
-            # "Worse than Average" annotation
             list(
-              x = 0.65, # Position to the left of the plot
+              x = 0.65, 
               y = 1.07,  
               text = "Worse Than Average", 
               showarrow = FALSE, 
@@ -97,7 +98,7 @@ barchartServer <- function(id) {
               font = list(size = 12)
             )
           )
-        ) %>% 
+        ) |>
         config(toImageButtonOptions = list(format = "png"))
     })
     
