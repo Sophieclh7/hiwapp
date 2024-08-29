@@ -45,11 +45,12 @@ barchartUI <- function(id) {
 # ---- Server function ----
 barchartServer <- function(id) {
   moduleServer(id, function(input, output, session) {
-    # Load the datasets
+    
+    # Load data
     load("data/hl_composite_score.rda")
     load("data/hl_raw_data.rda")
     
-    # Create a mapping of indicators to their respective raw count descriptions
+    # Create a mapping of indicators to their raw count descriptions
     indicator_description <- list(
       "6 in 1 vaccination" = "Percentage immunised with 6 in 1 vaccination by 2nd birthday",
       "Adult overweight obese" = "Percentage adults overweight or obese",
@@ -78,6 +79,7 @@ barchartServer <- function(id) {
     
     # Render the bar chart as a plotly object
     output$barchart <- renderPlotly({
+      
       # Combine the datasets for easier access
       combined_data <- hl_composite_score |>
         mutate(
@@ -86,42 +88,42 @@ barchartServer <- function(id) {
           text = paste(
             "Area:", ltla21_name,
             "<br>Indicator Score:", round(.data[[input$indicator]]),  # Round the composite score
-            "<br>", indicator_description[[input$indicator]], ":", raw_count  # Use rounded raw count
+            "<br>", indicator_description[[input$indicator]], ":", raw_count  # Use raw count descriptions when hover over bars
           )
         )
       
       # Create the bar chart with ggplot2
       p <- ggplot(combined_data, aes(x = ltla21_name, y = adjusted_score, text = text)) +
-        geom_bar(stat = "identity", fill = "lightblue", color = "black") +
+        geom_bar(stat = "identity", fill = "lightblue", color = "darkgrey") + # Set fill and outline colour of bars, darkgrey chosen so average line stands out more
         theme_minimal() +
         labs(title = "Indicator Scores by Area", 
              x = "Area", 
              y = input$indicator) +
-        theme(axis.text = element_text(size = 8), 
-              axis.title = element_text(size = 14), 
-              plot.title = element_text(size = 16, face = "bold")) +
-        coord_flip() +
-        scale_y_continuous(limits = c(-25, 25), breaks = seq(-25, 25, by = 5),
+        theme(axis.text = element_text(size = 8), # Size of text along axes, so place names fit
+              axis.title = element_text(size = 14), # Size of axes title (area)
+              plot.title = element_text(size = 16, face = "bold")) + # Size of plot title
+        coord_flip() + # Flips axes so the bars are horizontal
+        scale_y_continuous(limits = c(-25, 25), breaks = seq(-25, 25, by = 5), # Specify range of horizontal axis to be 25 less than 100 (75) to 25 over 100 (125) with intervals of 5
                            labels = function(x) {
-                             ifelse(x == 0, "100\nWelsh Average", as.character(x + 100))
+                             ifelse(x == 0, "100\nWelsh Average", as.character(x + 100)) # Add welsh average label
                            }) + 
-        geom_hline(yintercept = 0, linetype = "dashed", linewidth = 1)
+        geom_hline(yintercept = 0, linetype = "dashed", linewidth = 1) # Add welsh average dashed line
       
-      # Convert ggplot to plotly object for interactivity
+      # Convert to plotly object
       ggplotly(p, tooltip = "text") |>
         layout(
           annotations = list(
             list(
-              x = 0.6, 
-              y = 1.07,  
+              x = 0.6, # Label to the right of the average dotted line
+              y = 1.07,  # High y coordinate so label appears at top of plot
               text = "Better Than Average", 
-              showarrow = FALSE, 
-              xref = "paper", 
+              showarrow = FALSE, # Gets rid of arrows
+              xref = "paper", #Sets coordinates to be relative to plotly
               yref = "paper", 
-              font = list(size = 12)
+              font = list(size = 12) # Sets font size to 12
             ),
             list(
-              x = 0.4, 
+              x = 0.4, # Label to the left of the average dotted line
               y = 1.07,  
               text = "Worse Than Average", 
               showarrow = FALSE, 
