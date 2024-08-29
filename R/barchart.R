@@ -52,14 +52,15 @@ barchartServer <- function(id) {
     # Render the bar chart as a plotly object
     output$barchart <- renderPlotly({
       # Combine the datasets for easier access
-      combined_data <- hl_composite_score %>%
+      combined_data <- hl_composite_score |>
         mutate(raw_count = hl_raw_data[[input$indicator]],
                text = paste("Area:", ltla21_name,
                             "<br>Composite Score:", .data[[input$indicator]],
-                            "<br>Raw Count:", raw_count))
+                            "<br>Raw Count:", raw_count),
+               adjusted_score = .data[[input$indicator]] - 100)  # Adjust the score to center around 100
       
       # Create the bar chart with ggplot2
-      p <- ggplot(combined_data, aes(x = ltla21_name, y = .data[[input$indicator]], text = text)) +
+      p <- ggplot(combined_data, aes(x = ltla21_name, y = adjusted_score, text = text)) +
         geom_bar(stat = "identity", fill = "lightblue", color = "black") +
         theme_minimal() +
         labs(title = "Indicator Scores by Area", 
@@ -69,18 +70,18 @@ barchartServer <- function(id) {
               axis.title = element_text(size = 14), 
               plot.title = element_text(size = 16, face = "bold")) +
         coord_flip() +
-        scale_y_continuous(limits = c(0, 130), breaks = seq(0, 130, by = 10),
+        scale_y_continuous(limits = c(-25, 25), breaks = seq(-25, 25, by = 5),
                            labels = function(x) {
-                             ifelse(x == 100, "100\nWelsh Average", as.character(x))
+                             ifelse(x == 0, "100\nWelsh Average", as.character(x + 100))
                            }) + 
-        geom_hline(yintercept = 100, linetype = "dashed", linewidth = 1.5)
+        geom_hline(yintercept = 0, linetype = "dashed", linewidth = 1)
       
       # Convert ggplot to plotly object for interactivity
       ggplotly(p, tooltip = "text") |>
         layout(
           annotations = list(
             list(
-              x = 0.92, 
+              x = 0.6, 
               y = 1.07,  
               text = "Better Than Average", 
               showarrow = FALSE, 
@@ -89,7 +90,7 @@ barchartServer <- function(id) {
               font = list(size = 12)
             ),
             list(
-              x = 0.65, 
+              x = 0.4, 
               y = 1.07,  
               text = "Worse Than Average", 
               showarrow = FALSE, 
